@@ -1,0 +1,195 @@
+/* General body styles */
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px 0; /* Ensures spacing on smaller screens */
+    background: linear-gradient(to bottom, #d8fac8, #4aa85a);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* General container styles */
+.container {
+    display: flex;
+    align-items: stretch;
+    gap: 50px;
+    width: 95%;
+    max-width: 1400px;
+    margin: 50px auto;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Section styles */
+.details-section,
+.guidelines-section {
+    background-color: #a2f8c2;
+    border-radius: 20px;
+    padding: 20px;
+    gap: 20px;
+    position: relative;
+    min-width: 350px;
+    height: auto;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Heading styles */
+.details-section h1,
+.guidelines-section h1 {
+    font-size: 24px;
+    margin-top: 20px; /* Add top margin */
+    color: #000;
+    text-align: center; /* Center align for small screens */
+}
+
+/* Image section styles */
+.image-section {
+    text-align: center;
+}
+
+.image-section img {
+    max-width: 150px;
+    border-radius: 10%;
+}
+
+/* Guidelines list styles */
+.guidelines-section ul {
+    list-style-type: decimal;
+    padding-left: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.guidelines-section ul li {
+    margin-bottom: 10px;
+}
+
+/* Button styles */
+.start-button {
+    background: linear-gradient(to right, #e2f46c, #1caf41); /* Green */
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.start-button:hover {
+    background: linear-gradient(to right, #82c65e, #e3ff75); /* Hover effect */
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .container {
+        gap: 30px; /* Reduce gap for smaller desktops */
+    }
+
+    .details-section,
+    .guidelines-section {
+        padding: 15px; /* Adjust padding for medium screens */
+        gap: 15px;
+    }
+
+    .details-section h1,
+    .guidelines-section h1 {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 992px) {
+    .container {
+        flex-wrap: wrap; /* Ensure wrapping for tablets */
+        margin: 30px auto;
+    }
+
+    .details-section,
+    .guidelines-section {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .start-button {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        gap: 20px;
+        margin: 20px auto;
+    }
+
+    .details-section,
+    .guidelines-section {
+        min-width: 300px; /* Adjust section size for smaller screens */
+    }
+
+    .details-section h1,
+    .guidelines-section h1 {
+        font-size: 20px; /* Reduce font size */
+    }
+
+    .start-button {
+        font-size: 14px;
+        bottom: 10px; /* Adjust button positioning */
+        right: 10px;
+    }
+
+    .image-section img {
+        max-width: 100px; /* Reduce image size */
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        flex-direction: column; /* Stack sections vertically */
+        margin: 10px auto;
+    }
+
+    .details-section,
+    .guidelines-section {
+        width: 100%; /* Full width for small screens */
+        padding: 10px;
+    }
+
+    .details-section h1,
+    .guidelines-section h1 {
+        font-size: 18px;
+    }
+
+    .start-button {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .image-section img {
+        max-width: 80px; /* Further reduce image size */
+    }
+}
+
+@media (max-width: 400px) {
+    .details-section h1,
+    .guidelines-section h1 {
+        font-size: 16px; /* Very small font for tiny screens */
+    }
+
+    .start-button {
+        font-size: 10px;
+        padding: 5px 10px;
+    }
+}

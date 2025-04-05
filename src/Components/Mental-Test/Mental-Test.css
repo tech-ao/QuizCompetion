@@ -1,0 +1,96 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #d8fac8, #4aa85a);
+  }
+  
+  .test-type {
+    display: flex;
+    flex-direction: column; /* Stack sections vertically */
+    align-items: center;
+    padding: 20px;
+    gap: 20px; /* Added gap between sections */
+  }
+  
+  /* Header Section */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    background: linear-gradient(to bottom, #d8fac8, #2b6335);
+    border: 2px solid black;
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+    box-sizing: border-box;
+  }
+  
+  .header-input {
+    display: flex;
+    gap: 20px; /* Space between label-input pairs */
+    font-weight: bold;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping of inputs */
+  }
+  
+  .header-input label {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between label and input */
+    font-size: 1rem;
+    color: #ffffff;
+  }
+  
+  .header-input input {
+    border: none;
+    border-bottom: 2px dotted #ffffff; /* Dotted underline */
+    background: none;
+    outline: none;
+    padding: 5px;
+    font-size: 1rem;
+    width: 150px; /* Adjust as needed */
+    color: white;
+  }
+  
+  .header-input input:focus {
+    outline: none;
+    border-color: #030303;
+  }
+  
+  .header-timer {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  /* Box Style for Manual and Mental */
+  .box {
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  /* Manual Section */
+  .test-type > .manual .box {
+ 
+    background-color: #4aa85a; /* Green color for Mental */
+    color: white;
+  }
+  
+  /* Mental Section */
+  .test-type > .mental .box {
+    background-color: white;
+    color: #030303;
+  }
+  
+  /* Hover effect for Manual and Mental */
+  .test-type > .manual:hover .box,
+  .test-type > .mental:hover .box {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    box-shadow: 0 6px 12px rgba(17, 9, 9, 0.3); /* Enhance shadow on hover */
+  }
+  

@@ -1,0 +1,167 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #d8fac8, #4aa85a);
+}
+
+/* Header Section */
+.header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: linear-gradient(to bottom, #d8fac8, #2b6335);
+    border: 2px solid black;
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+}
+
+.header-input {
+    display: flex;
+    gap: 20px; /* Space between label-input pairs */
+    font-weight: bold;
+    align-items: center;
+}
+
+.header-input label {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between label and input */
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.header-input input {
+    border: none;
+    border-bottom: 2px dotted #ffffff; /* Dotted underline */
+    background: none;
+    outline: none;
+    padding: 5px;
+    font-size: 1rem;
+    width: 150px; /* Adjust as needed */
+    color: white;
+}
+
+.header-input input:focus {
+    outline: none;
+    border-color: #030303;
+}
+
+.header-timer {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Details Section */
+.Details {
+    display: flex; /* Use Flexbox */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    width: 100%;
+    max-width: 1400px; /* Matches the max-width of .header */
+    margin: 0 auto; /* Centers the container */
+    padding: 10px; /* Optional padding */
+    border: 2px solid #000; /* Optional border to match styling */
+    border-radius: 10px; /* Consistent border radius */
+    background-color:  #a2f8c2; /* Optional background color */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for better aesthetics */
+}
+.nav-button {
+    background:linear-gradient(to right, #cdcf36, #30da39);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-button:hover {
+    background-color: #56a35e;
+  }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .header {
+        flex-direction: column; /* Stack header content vertically */
+        padding: 20px;
+    }
+
+    .header-input {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start; /* Align inputs to the left */
+    }
+
+    .header-timer {
+        font-size: 1.2rem; /* Reduce font size */
+        margin-top: 10px;
+    }
+
+    .Details {
+        max-width: 90%; /* Reduce max-width for smaller screens */
+        padding: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 15px;
+    }
+
+    .header-input label {
+        font-size: 0.9rem; /* Adjust font size for smaller devices */
+    }
+
+    .header-input input {
+        width: 100px; /* Reduce input width */
+    }
+
+    .header-timer {
+        font-size: 1rem; /* Reduce font size */
+    }
+
+    .Details {
+        max-width: 100%; /* Utilize full width */
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 10px;
+    }
+
+    .header-input {
+        flex-direction: column;
+        align-items: center; /* Center-align inputs */
+    }
+
+    .header-input label {
+        font-size: 0.8rem; /* Smaller font size for mobile */
+    }
+
+    .header-input input {
+        width: 80px; /* Adjust input size for mobile */
+    }
+
+    .header-timer {
+        font-size: 0.9rem;
+    }
+
+    .Details {
+        border: none; /* Optional: Remove borders for a cleaner mobile look */
+        box-shadow: none; /* Optional: Remove shadow */
+    }
+    .nav-button {
+        padding: 5px 10px;
+        font-size: 0.9rem;
+      }
+    
+}
