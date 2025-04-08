@@ -1,201 +1,143 @@
-.application-form-container {
+.register-student-page {
+  background: rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Aligns content to the top */
-  background: linear-gradient(to bottom, #d8fac8, #4aa85a);
-  min-height: 80vh; /* Ensures content height expands */
-  width: 100vw;
-  margin: 0;
-  padding: 20px 0; /* Adds padding for top and bottom spacing */
-  font-family: Arial, sans-serif;
-  overflow-y: auto; /* Enables scrolling if content exceeds viewport */
+  align-items: center;
+  padding: 20px;
 }
 
-.mathgym-logo {
-  font-size: 28px;
-  font-weight: bold;
-  text-align: center;
-  color: #000;
-  margin-bottom: 20px;
-  line-height: 1.2;
+.registerbg-image {
+  background-image: url('../../images/RegisterBc.jpg');
+  /* Update with your background image path */
+  background-size: cover;
+  background-position: center;
 }
 
-.form-wrapper {
-  border-radius: 20px;
-  padding: 40px;
-  background-color: #a2f8c2;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  border: 5px solid; /* Adjust border width */
-  border-image: linear-gradient(to right, #e2f46c, #1caf41) 1;
-  /* Border matches submit button */
-  width: 80%; /* Increased form width */
-  max-width: 1200px; /* Limits width on larger screens */
-  margin: 50px 0; /* Increased top margin for all screen sizes */
+.register-student-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  margin-top: 7rem;
 }
 
-.form-title {
-  font-size: 32px;
-  font-weight: bold;
+.reg-Header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-student-container h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #000;
 }
 
-.form-group {
+.preview-image {
+  display: block;
+  margin: 10px auto;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .register-student-container {
+    padding: 15px;
+  }
+}
+
+/* New rules to ensure the "Go to Login" link and "Register Student" button share the same width and appear in a single row */
+.register-student-container .d-flex.align-items-center.justify-content-between {
+  display: flex;
+  flex-direction: row;
+}
+
+.register-student-container .d-flex.align-items-center.justify-content-between > a,
+.register-student-container .d-flex.align-items-center.justify-content-between > button {
+  width: 50%;
+  text-align: center;
+  margin: 0; /* Override any margins to ensure equal width */
+}
+
+body {
+  font-family: Arial, sans-serif !important;
+  background-color: #f8d7da !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100vh !important;
+}
+
+.container {
+  background-color: #ffe6e6;
+  padding: 20px;
+  border-radius: 10px;
+  width: 650px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.form-row {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 15px 0;
+  margin-bottom: 10px;
 }
 
-.form-label {
-  font-size: 18px;
+.form-row label {
+  width: 35%;
   font-weight: bold;
-  color: #000;
-  margin-right: 20px;
-  width: 30%; /* Controls label width */
 }
 
-.form-input {
-  flex: 1;
+.form-row input, .form-row select, .form-row textarea {
+  width: 60%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.name-fields, .dob-fields, .mobile-field {
+  display: flex;
+  gap: 5px;
+}
+
+.name-fields input, .dob-fields input, .mobile-field input {
+  width: 30%;
+}
+
+.gender-field, .department-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+button {
+  background-color: #d9534f;
+  color: white;
+  padding: 10px;
   border: none;
-  border-bottom: 2px solid #000;
-  outline: none;
-  padding: 5px;
-  font-size: 16px;
-  color: #000;
-  background: transparent;
-  transition: border-color 0.3s ease;
-}
-
-.form-input:focus {
-  border-bottom: 2px solid #82c65e; /* Highlight color */
-}
-
-.submit-button {
-  display: block;
-  margin: 20px auto 0;
-  padding: 10px 20px;
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  border-radius: 25px;
-  background: linear-gradient(to right, #e2f46c, #1caf41); /* Green */
+  border-radius: 5px;
   cursor: pointer;
-  color: #000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  width: 100%;
 }
 
-.submit-button:hover {
-  background: linear-gradient(to right, #82c65e, #e3ff75); /* Hover effect */
+button:hover {
+  background-color: #c9302c;
 }
 
-/* Styles for checkbox */
-.checkbox-input {
-  margin-right: 10px;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
 
-.form-group .checkbox-input:checked {
-  background-color: #82c65e;
-  border-color: #82c65e;
-}
-
-.form-group label .checkbox-input:disabled {
-  cursor: not-allowed;
-}
-
-/* Responsive Styles */
-@media screen and (max-width: 768px) {
-  .application-form-container {
-    padding: 10px 0; /* Ensure top and bottom spacing */
-    background: linear-gradient(to bottom, #d8fac8, #4aa85a); /* Plain background color for smaller screens */
-  }
-
-  .form-wrapper {
-    width: 90%; /* Wider for smaller screens */
-    padding: 20px 30px;
-    margin-top: 50%; /* Increased top margin for smaller screens */
-  }
-
-  .form-title {
-    font-size: 28px;
-    margin-top: 20px; /* Ensures visibility of heading */
-  }
-
-  .form-group {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .form-label {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-
-  .form-input {
-    width: 100%; /* Full-width input for smaller devices */
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .application-form-container {
-    padding: 10px 0; /* Ensure top and bottom spacing */
-    background: linear-gradient(to bottom, #d8fac8, #4aa85a); /* Plain background color for smaller screens */
-  }
-
-  .form-wrapper {
-    width: 95%;
-    padding: 15px 20px;
-    margin-top: 80%; /* Increased top margin for very small screens */
-  }
-
-  .form-title {
-    font-size: 24px;
-    margin-top: 20px; /* Prevent heading from being hidden */
-  }
-
-  .submit-button {
-    padding: 8px 16px;
-    font-size: 16px;
-  }
-}
-@media screen and (min-width: 1024px) {
-  .application-form-container {
-    background: linear-gradient(to bottom, #d8fac8, #4aa85a); /* Keep the gradient */
-  }
-
-  .form-wrapper {
-    width: 60%; /* Reduce width for large screens for better focus */
-    padding: 10px 30px; /* Add more padding for a spacious layout */
-    margin-top: 40%; /* Ensures the form is positioned lower from the top */
-  }
-
-  .form-title {
-    font-size: 36px; /* Increase title size for better readability */
-    margin-bottom: 30px; /* Add spacing below the title */
-  }
-
-  .form-group {
-    margin: 20px 0; /* Add more vertical spacing between fields */
-  }
-
-  .form-label {
-    font-size: 20px; /* Slightly larger font for labels */
-    margin-right: 10px; /* Increase spacing between label and input */
-    width: 35%; /* Adjust width for better alignment */
-  }
-
-  .form-input {
-    font-size: 18px; /* Larger font size for better readability */
-    padding: 10px; /* Increase padding for inputs */
-  }
-
-  .submit-button {
-    padding: 15px 30px; /* Larger button for easier clicking */
-    font-size: 20px; /* Increase font size on button */
-    border-radius: 30px; /* Adjust border radius for a more refined look */
-  }
-}
