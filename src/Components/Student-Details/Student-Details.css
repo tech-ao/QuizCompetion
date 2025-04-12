@@ -74,6 +74,8 @@ body {
 .start-button {
     background: linear-gradient(to right, #e2f46c, #1caf41); /* Green */
     color: #000;
+    width: 90%;
+    margin-left: 5%;
     font-size: 18px;
     font-weight: bold;
     padding: 10px 20px;
@@ -81,9 +83,7 @@ body {
     border-radius: 15px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
+ 
 }
 
 .start-button:hover {

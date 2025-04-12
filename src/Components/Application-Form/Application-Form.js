@@ -160,7 +160,7 @@ const RegisterStudent = () => {
   return (
     <div className="register-student-container"><RegisterHeader />
       <div className="register-student-page registerbg-image">
-        {/* Register Header Component Added */}
+       
 
         <div >
           <h2 className="form-title">Register New Student</h2>

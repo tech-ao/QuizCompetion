@@ -19,6 +19,7 @@ const StudentDetails = () => {
           <p>D.O.B :</p>
           <p>Email :</p>
           <p>Organization :</p>
+          <p>Fees :</p>
           <div className="image-section">
             <img
               src="https://via.placeholder.com/150"
@@ -38,11 +39,11 @@ const StudentDetails = () => {
             <li></li>
             <li></li>
           </ul>
-          <div className="start-button-div">
+          
             <button className="start-button" onClick={handleStartTest}>
               Start Test
             </button>
-          </div>
+         
         </div>
       </div>
     </div>

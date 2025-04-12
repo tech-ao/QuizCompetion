@@ -82,7 +82,7 @@ const LoginPage = () => {
             />
             <span
               onClick={() => setShowPassword(!showPassword)}
-              className="position-absolute top-50 end-0 translate-middle-y me-3"
+              className="position-absolute top-50 end-0 translate-middle-y mt-3 me-3"
               style={{ cursor: "pointer" }}
             >
               {showPassword ? <FiEyeOff /> : <FiEye />}

@@ -21,7 +21,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 600px;
-  margin-top: 7rem;
+  margin-top: 110%;
 }
 
 .reg-Header {
@@ -48,8 +48,16 @@
 @media (max-width: 768px) {
   .register-student-container {
     padding: 15px;
+    margin-top: 125%;
   }
 }
+@media (max-width: 425px) {
+  .register-student-container {
+    padding: 15px;
+    margin-top: 170%;
+  }
+}
+
 
 /* New rules to ensure the "Go to Login" link and "Register Student" button share the same width and appear in a single row */
 .register-student-container .d-flex.align-items-center.justify-content-between {
