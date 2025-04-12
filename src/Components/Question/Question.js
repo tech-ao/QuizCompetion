@@ -1,38 +1,56 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getQuestions } from "../../redux/Action/QuestionAction";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Question.css";
 
 const Questions = () => {
-  const [timer, setTimer] = useState(600); // Countdown timer (10 minutes in seconds)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Index for current question
-  const [realTime, setRealTime] = useState(""); // Real-time clock
-  const navigate = useNavigate(); // Initialize navigate
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // Array of questions
-  const questions = [
-    { questionNumber: 1, numberOne: 11, numberTwo: -24, numberThree: 67 },
-    { questionNumber: 2, numberOne: 35, numberTwo: 42, numberThree: -15 },
-    { questionNumber: 3, numberOne: 7, numberTwo: -9, numberThree: 19 },
-    { questionNumber: 4, numberOne: 28, numberTwo: -16, numberThree: 34 },
-    { questionNumber: 5, numberOne: 50, numberTwo: 21, numberThree: -13 },
-    { questionNumber: 6, numberOne: -12, numberTwo: 8, numberThree: 44 },
-    { questionNumber: 7, numberOne: 19, numberTwo: -33, numberThree: 10 },
-    { questionNumber: 8, numberOne: 60, numberTwo: -45, numberThree: 25 },
-    { questionNumber: 9, numberOne: 14, numberTwo: -6, numberThree: 38 },
-    { questionNumber: 10, numberOne: 3, numberTwo: 5, numberThree: -7 },
-  ];
+  const [timer, setTimer] = useState(600);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [realTime, setRealTime] = useState("");
+  const [name, setName] = useState("");
+  const [level, setLevel] = useState(1);
+  const [answer, setAnswer] = useState("");
 
-  // Countdown timer logic
+  const questionState = useSelector((state) => state.questionList);
+  const { loading, error } = questionState;
+
+  console.log(questionState);
+  
+
+// const questions = [ 
+//     { questionNumber: 1, numberOne: 11, numberTwo: -24, numberThree: 67 },
+//     { questionNumber: 2, numberOne: 35, numberTwo: 42, numberThree: -15 },
+//     { questionNumber: 3, numberOne: 7, numberTwo: -9, numberThree: 19 },
+//     { questionNumber: 4, numberOne: 28, numberTwo: -16, numberThree: 34 },
+//     { questionNumber: 5, numberOne: 50, numberTwo: 21, numberThree: -13 },
+//     { questionNumber: 6, numberOne: -12, numberTwo: 8, numberThree: 44 },
+//     { questionNumber: 7, numberOne: 19, numberTwo: -33, numberThree: 10 },
+//     { questionNumber: 8, numberOne: 60, numberTwo: -45, numberThree: 25 },
+//     { questionNumber: 9, numberOne: 14, numberTwo: -6, numberThree: 38 },
+//     { questionNumber: 10, numberOne: 3, numberTwo: 5, numberThree: -7 },
+//   ];
+
+const questions = questionState?.questions?.data?.questions || [];
+
+console.log(questionState);
+
+  // Fetch questions on component mount
+  useEffect(() => {
+    dispatch(getQuestions({ level: level, pagination: { pageSize: 15, pageNumber: 1 } }));
+  }, [dispatch, level]);
+
   useEffect(() => {
     const countdown = setInterval(() => {
       setTimer((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-
-    return () => clearInterval(countdown); // Cleanup interval on component unmount
+    return () => clearInterval(countdown);
   }, []);
 
-  // Real-time clock logic (optimized with requestAnimationFrame)
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
@@ -42,43 +60,37 @@ const Questions = () => {
           .toString()
           .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`
       );
-      requestAnimationFrame(updateClock); // Continue updating
+      requestAnimationFrame(updateClock);
     };
-
-    requestAnimationFrame(updateClock); // Start the real-time clock
-
-    return () => cancelAnimationFrame(updateClock); // Cleanup on unmount
+    requestAnimationFrame(updateClock);
+    return () => cancelAnimationFrame(updateClock);
   }, []);
 
-  // Format the timer into MM:SS
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // Handle navigation to the next question or the manual-submit.jsx file
   const handleNext = () => {
     if (currentQuestionIndex === questions.length - 1) {
-      navigate("/manual-submit"); // Navigate to the manual-submit.jsx file
+      navigate("/manual-submit");
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
+      setAnswer(""); // Clear answer on next
     }
   };
 
-  // Handle navigation to the previous question or the test-type.jsx file
   const handlePrevious = () => {
     if (currentQuestionIndex === 0) {
-      navigate("/test-type"); // Navigate to the test-type.jsx file
+      navigate("/test-type");
     } else {
       setCurrentQuestionIndex((prev) => prev - 1);
+      setAnswer(""); // Clear answer on previous
     }
   };
 
-  // Get the current question
-  const currentQuestion = questions[currentQuestionIndex];
+  const currentQuestion = questions && questions[currentQuestionIndex];
 
   return (
     <div>
