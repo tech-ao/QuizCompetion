@@ -25,44 +25,60 @@ const RegisterHeader = () => {
   };
 
   return (
-    <Navbar expand="lg" className="header py-2 fixed-header">
-      <Container className="d-flex align-items-center w-100">
-        {/* Left: Logo */}
-        <div className="d-flex align-items-center">
-          <Link to="/" className="d-flex align-items-center">
-            <img
-              className="logo1 me-2 border-dark-green"
-              src={logo}
-              alt="Logo"
-              style={{ 
-                cursor: 'pointer', 
-                maxWidth: '80px', 
-                border: '1px solid #000', 
-                borderRadius: '5px' 
-              }}
-            />
-          </Link>
-        </div>
-        
-        {/* Center: Math Gym and Flex Your Brain */}
-        <div className="flex-grow-1 text-center">
-          <span style={styles.headerTitle}>Math Gym</span>
-          <br />
-          <span style={styles.headerSubtitle}>Flex Your Brain</span>
-        </div>
+    <Navbar expand="lg" className="header fixed-header py-2" style={{ background: '#a2f8c2', minHeight: '60px' }}>
+  <Container
+    className="d-flex flex-column flex-md-row align-items-center justify-content-between w-100"
+    style={{
+      backgroundImage: 'linear-gradient(to right, #a2f8c2, #ccffcc, #a2f8c2)',
+      padding: '0.3rem 1rem', // Minimal padding for compact height
+      borderRadius: '8px',
+    }}
+  >
+    {/* Left: Logo */}
+    <div className="mb-2 mb-md-0">
+      <Link to="/" className="d-flex align-items-center">
+        <img
+          src={logo}
+          alt="Logo"
+          className="me-2"
+          style={{
+            cursor: 'pointer',
+            maxWidth: '60px', // Slightly smaller logo for compact look
+            border: '1px solid #000',
+            borderRadius: '5px',
+          }}
+        />
+      </Link>
+    </div>
 
-        {/* Right: Web Icon */}
-        <div className="d-flex align-items-center">
-          <a 
-            href="https://mathgymint.com/" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-          >
-            <FaGlobe size={24} color="#198754" />
-          </a>
-        </div>
-      </Container>
-    </Navbar>
+    {/* Center: Titles */}
+    <div className="text-center mb-2 mb-md-0">
+      <span style={{
+        fontSize: 'calc(14px + 0.8vw)',
+        fontWeight: 'bold',
+        color: '#28a745',
+      }}>Math Gym</span>
+      <br />
+      <span style={{
+        fontSize: 'calc(10px + 0.5vw)',
+        fontWeight: 500,
+        color: '#6c757d',
+      }}>Flex Your Brain</span>
+    </div>
+
+    {/* Right: Icon */}
+    <div className="mb-1 mb-md-0">
+      <a
+        href="https://mathgymint.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FaGlobe size={20} color="#198754" /> {/* Slightly smaller icon */}
+      </a>
+    </div>
+  </Container>
+</Navbar>
+
   );
 };
 

@@ -15,6 +15,8 @@ import RegisterHeader from "./RegisterHeader";
 import { useNavigate, Link } from "react-router-dom";
 const RegisterStudent = () => {
   const [countries, setCountries] = useState([]);
+  const examDates = ['2025-05-10', '2025-06-15', '2025-07-20'];
+
   const [grades, setGrades] = useState([]);
   const [genders, setGenders] = useState([]);
   const [classModes, setClassModes] = useState([]);
@@ -34,6 +36,7 @@ const RegisterStudent = () => {
     country: "",
     statusId: 3,
     createdBy: 1,
+    fees: 850,
     profile: {
       name: "",
       extension: "",
@@ -160,39 +163,38 @@ const RegisterStudent = () => {
   return (
     <div className="register-student-container"><RegisterHeader />
       <div className="register-student-page registerbg-image">
-       
-
         <div >
           <h2 className="form-title">Register New Student</h2>
           <Form onSubmit={handleSubmit}>
             {/* Personal Information */}
-            <Row className="mb-3">
-              <Form.Group as={Col} controlId="formStudentFirstName">
-                <Form.Label>First Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="firstName"
-                  placeholder="Enter first name"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </Form.Group>
+            <Row className="mb-0">
+  <Form.Group as={Col} className="me-3" controlId="formStudentFirstName">
+    <Form.Label>First Name</Form.Label>
+    <Form.Control
+      type="text"
+      name="firstName"
+      placeholder="Enter first name"
+      value={formData.firstName}
+      onChange={handleInputChange}
+      required
+    />
+  </Form.Group>
 
-              <Form.Group as={Col} controlId="formStudentLastName">
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="lastName"
-                  placeholder="Enter last name"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </Form.Group>
-            </Row>
+  <Form.Group as={Col} controlId="formStudentLastName">
+    <Form.Label>Last Name</Form.Label>
+    <Form.Control
+      type="text"
+      name="lastName"
+      placeholder="Enter last name"
+      value={formData.lastName}
+      onChange={handleInputChange}
+      required
+    />
+  </Form.Group>
+</Row>
 
-            <Form.Group className="mb-3" controlId="formStudentEmail">
+
+            <Form.Group className="mb-0" controlId="formStudentEmail">
               <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
@@ -205,8 +207,8 @@ const RegisterStudent = () => {
             </Form.Group>
 
             {/* Contact Information */}
-            <Row className="mb-3">
-              <Form.Group as={Col} controlId="formPhoneNumber">
+            <Row className="mb-0">
+              <Form.Group as={Col} className="me-3" controlId="formPhoneNumber">
                 <Form.Label>Phone Number</Form.Label>
                 <Form.Control
                   type="text"
@@ -241,7 +243,7 @@ const RegisterStudent = () => {
             </Row>
 
             {/* Academic Information */}
-            <Form.Group className="mb-3" controlId="formGrade">
+            <Form.Group className="mb-0" controlId="formGrade">
               <Form.Label>Grade</Form.Label>
               <Form.Select
                 name="grade"
@@ -259,7 +261,7 @@ const RegisterStudent = () => {
             </Form.Group>
 
             {/* Gender */}
-            <Form.Group className="mb-3" controlId="formGender">
+            <Form.Group className="mb-0" controlId="formGender">
               <Form.Label>Gender</Form.Label>
               <Row>
                 {genders.map((gender) => (
@@ -278,63 +280,65 @@ const RegisterStudent = () => {
               </Row>
             </Form.Group>
 
-            {/* Class Mode */}
-            <Form.Group className="mb-3" controlId="formClassMode">
-              <Form.Label>Class Mode</Form.Label>
-              <Row>
-                {classModes.map((mode) => (
-                  <Col key={mode.item1} xs={6} md={4}>
-                    <Form.Check
-                      type="radio"
-                      label={mode.item2}
-                      name="studyModeId"
-                      value={mode.item1}
-                      checked={formData.studyModeId === mode.item1}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </Col>
-                ))}
-              </Row>
-            </Form.Group>
-
-            {/* Country */}
-            <Form.Group className="mb-3" controlId="formCountry">
-              <Form.Label>Country</Form.Label>
-              <Form.Select
-                name="country"
-                value={formData.country}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Country</option>
-                {countries.map((country) => (
-                  <option key={country.item1} value={country.item1}>
-                    {country.item2}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-
-            
-
-            <Form.Group className="mb-3" controlId="formAddress">
-  <Form.Label>Address</Form.Label>
+        {/* Center Name */}
+<Form.Group className="mb-0" controlId="formCenterName">
+  <Form.Label>Center Name</Form.Label>
   <Form.Control
-    as="textarea"
-    name="address"
-    rows={3}
-    placeholder="Enter your address"
-    value={formData.address}
+    type="text"
+    name="centerName"
+    placeholder="Enter Center Name"
+    value={formData.centerName}
     onChange={handleInputChange}
     required
   />
 </Form.Group>
 
+{/* Exam Date */}
+<Form.Group className="mb-0" controlId="formExamDate">
+  <Form.Label>Exam Date</Form.Label>
+  <Form.Select
+    name="examDate"
+    value={formData.examDate}
+    onChange={handleInputChange}
+    required
+  >
+    <option value="">Select Exam Date</option>
+    {examDates.map((date) => (
+      <option key={date} value={date}>
+        {date}
+      </option>
+    ))}
+  </Form.Select>
+</Form.Group>
+
+{/* Fees */}
+<Form.Group className="mb-0" controlId="formFees">
+  <Form.Label>Fees</Form.Label>
+  <Form.Control
+    type="text"
+    name="fees"
+    value={`₹${formData.fees}`} // Assuming fees is a number or string
+    readOnly
+  />
+</Form.Group>
+
+
+
             <div className="d-flex align-items-center justify-content-between">
-              <Link to="/" className="text-decoration-none text-success me-2">
-                Go to Login
-              </Link>
+            <Link 
+  to="/" 
+  className="rounded-pill px-3 py-1 shadow-sm fw-semibold text-decoration-none"
+  style={{ 
+    fontSize: '16px',
+    width: 'fit-content',
+    border: '1px solid black',  // Black border
+    color: 'black',  // Black text
+    background: 'linear-gradient(to right, #a2f8c2, rgb(245, 245, 160), #a2f8c2)'
+  }}
+>
+  ← Go To Login
+</Link>
+
               <Button variant="success" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Registering..." : "Register Student"}
               </Button>
