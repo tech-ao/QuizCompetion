@@ -22,20 +22,19 @@ const Questions = () => {
   console.log(questionState);
   
 
-// const questions = [ 
-//     { questionNumber: 1, numberOne: 11, numberTwo: -24, numberThree: 67 },
-//     { questionNumber: 2, numberOne: 35, numberTwo: 42, numberThree: -15 },
-//     { questionNumber: 3, numberOne: 7, numberTwo: -9, numberThree: 19 },
-//     { questionNumber: 4, numberOne: 28, numberTwo: -16, numberThree: 34 },
-//     { questionNumber: 5, numberOne: 50, numberTwo: 21, numberThree: -13 },
-//     { questionNumber: 6, numberOne: -12, numberTwo: 8, numberThree: 44 },
-//     { questionNumber: 7, numberOne: 19, numberTwo: -33, numberThree: 10 },
-//     { questionNumber: 8, numberOne: 60, numberTwo: -45, numberThree: 25 },
-//     { questionNumber: 9, numberOne: 14, numberTwo: -6, numberThree: 38 },
-//     { questionNumber: 10, numberOne: 3, numberTwo: 5, numberThree: -7 },
-//   ];
+const questions = [ 
+    { questionNumber: 1, numberOne: 11, numberTwo: -24, numberThree: 67 },
+    { questionNumber: 2, numberOne: 35, numberTwo: 42, numberThree: -15 },
+    { questionNumber: 3, numberOne: 7, numberTwo: -9, numberThree: 19 },
+    { questionNumber: 4, numberOne: 28, numberTwo: -16, numberThree: 34 },
+    { questionNumber: 5, numberOne: 50, numberTwo: 21, numberThree: -13 },
+    { questionNumber: 6, numberOne: -12, numberTwo: 8, numberThree: 44 },
+    { questionNumber: 7, numberOne: 19, numberTwo: -33, numberThree: 10 },
+    { questionNumber: 8, numberOne: 60, numberTwo: -45, numberThree: 25 },
+    { questionNumber: 9, numberOne: 14, numberTwo: -6, numberThree: 38 },
+    { questionNumber: 10, numberOne: 3, numberTwo: 5, numberThree: -7 },
+  ];
 
-const questions = questionState?.questions?.data?.questions || [];
 
 console.log(questionState);
 
@@ -43,6 +42,9 @@ console.log(questionState);
   useEffect(() => {
     dispatch(getQuestions({ level: level, pagination: { pageSize: 15, pageNumber: 1 } }));
   }, [dispatch, level]);
+
+  // const questions = questionState?.questions?.data?.questions || [];
+
 
   useEffect(() => {
     const countdown = setInterval(() => {
