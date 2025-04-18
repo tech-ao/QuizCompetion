@@ -37,8 +37,13 @@ const LoginPage = () => {
         if (data.data.statusId === 2 || data.data.statusId === 3) {
           navigate("/Pending");
         } else {
+          // ✅ Set session values
           sessionStorage.setItem("isLoggedIn", "true");
           sessionStorage.setItem("userRole", "Student");
+
+          // ✅ Set studentId in localStorage
+          localStorage.setItem("studentId", data.data.studentId);
+
           navigate("/student-details", { state: { userData: data.data } });
         }
       } else {

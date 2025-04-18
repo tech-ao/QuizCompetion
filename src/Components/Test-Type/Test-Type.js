@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const TestType = () => {
@@ -7,7 +9,14 @@ const TestType = () => {
   const [level, setLevel] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
+ const studentId = localStorage.getItem("studentId");
 
+  const { loading, error, selectedStudent: selectedStudent } = useSelector(
+    (state) => state.studentDetails
+  );
+
+
+const student = selectedStudent?.data
   // Update real-time clock
   useEffect(() => {
     const intervalId = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -36,7 +45,7 @@ const TestType = () => {
               <input
                 id="name"
                 type="text"
-                value={name}
+                value={student.firstName}
                 onChange={(e) => setName(e.target.value)}
                 className="form-control border-0 border-bottom w-100 mt-2 ms-2"
               />
@@ -48,7 +57,7 @@ const TestType = () => {
               <input
                 id="level"
                 type="text"
-                value={level}
+                value={student.gradeName}
                 onChange={(e) => setLevel(e.target.value)}
                 className="form-control border-0 border-bottom w-100 mt-2 ms-2"
               />
