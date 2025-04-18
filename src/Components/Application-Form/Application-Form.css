@@ -8,14 +8,16 @@
 }
 
 .registerbg-image {
-  background-image: url('../../images/RegisterBc.jpg');
+  background:#a2f8c2;
   /* Update with your background image path */
   background-size: cover;
   background-position: center;
+  border: 1px solid black;
+  border-radius: 15px;
 }
 
 .register-student-container {
-  background: #fff;
+  background: linear-gradient(to right, #a2f8c2, rgb(245, 245, 160), #a2f8c2);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
