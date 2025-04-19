@@ -3,7 +3,7 @@ import { Button, Form, Row, Col } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {addStudentAction} from "../../redux/Action/StudentAction"
+import { addStudentAction } from "../../redux/Action/StudentAction"
 import {
   fetchCountries,
   fetchGrades,
@@ -29,24 +29,16 @@ const RegisterStudent = () => {
     email: "",
     phoneNumber: "",
     dob: "",
-    grade: "",
+    grade: null,
     address: "",
-    gender: "",
-    studyModeId: "",
+    gender: null,
+    centerName:"",
+    studyModeId: 1,
     country: "",
+    isCompetition: true,
     statusId: 3,
     createdBy: 1,
-    fees: 850,
-    profile: {
-      name: "",
-      extension: "",
-      base64Content: "",
-    },
-    birthCertificate: {
-      name: "",
-      extension: "",
-      base64Content: "",
-    },
+
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -138,13 +130,15 @@ const RegisterStudent = () => {
           email: "",
           phoneNumber: "",
           dob: "",
-          grade: "",
-          address: "", 
-          gender: "",
-          studyModeId: "",
+          grade: null,
+          address: "",
+          gender: null,
+          studyModeId: 1,
           country: "",
+          isCompetition: true,
           statusId: 3,
-          createdBy: 1
+          createdBy: 1,
+          centerName:""
         });
         setPreview(null);
         setBirthCertificatePreview(null);
@@ -168,30 +162,30 @@ const RegisterStudent = () => {
           <Form onSubmit={handleSubmit}>
             {/* Personal Information */}
             <Row className="mb-0">
-  <Form.Group as={Col} className="me-3" controlId="formStudentFirstName">
-    <Form.Label>First Name</Form.Label>
-    <Form.Control
-      type="text"
-      name="firstName"
-      placeholder="Enter first name"
-      value={formData.firstName}
-      onChange={handleInputChange}
-      required
-    />
-  </Form.Group>
+              <Form.Group as={Col} className="me-3" controlId="formStudentFirstName">
+                <Form.Label>First Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="firstName"
+                  placeholder="Enter first name"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </Form.Group>
 
-  <Form.Group as={Col} controlId="formStudentLastName">
-    <Form.Label>Last Name</Form.Label>
-    <Form.Control
-      type="text"
-      name="lastName"
-      placeholder="Enter last name"
-      value={formData.lastName}
-      onChange={handleInputChange}
-      required
-    />
-  </Form.Group>
-</Row>
+              <Form.Group as={Col} controlId="formStudentLastName">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="lastName"
+                  placeholder="Enter last name"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </Form.Group>
+            </Row>
 
 
             <Form.Group className="mb-0" controlId="formStudentEmail">
@@ -231,14 +225,14 @@ const RegisterStudent = () => {
 
               <Form.Group as={Col} controlId="formDob">
                 <Form.Label>Date of Birth</Form.Label>
-                 <Form.Control
-                              type="date"
-                              name="dob"
-                              value={formData.dob}
-                              onChange={handleInputChange}
-                              required
-                              max={new Date().toISOString().split("T")[0]} // Prevents future dates
-                            />
+                <Form.Control
+                  type="date"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleInputChange}
+                  required
+                  max={new Date().toISOString().split("T")[0]} // Prevents future dates
+                />
               </Form.Group>
             </Row>
 
@@ -279,65 +273,93 @@ const RegisterStudent = () => {
                 ))}
               </Row>
             </Form.Group>
+            <Form.Group className="mb-3" controlId="formCountry">
+            <Form.Label>Country</Form.Label>
+            <Form.Select
+              name="country"
+              value={formData.country}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select Country</option>
+              {countries.map((country, index) => (
+                <option key={index} value={country.item1}>
+                  {country.item2}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
 
-        {/* Center Name */}
-<Form.Group className="mb-0" controlId="formCenterName">
-  <Form.Label>Center Name</Form.Label>
-  <Form.Control
-    type="text"
-    name="centerName"
-    placeholder="Enter Center Name"
-    value={formData.centerName}
-    onChange={handleInputChange}
-    required
-  />
-</Form.Group>
+            <Form.Group className="mb-3" controlId="formAddress">
+            <Form.Label>Address</Form.Label>
+            <Form.Control
+              as="textarea"
+              name="address"
+              rows={3}
+              placeholder="Enter address"
+              value={formData.address}
+              onChange={handleInputChange}
+              required
+            />
+          </Form.Group>
 
-{/* Exam Date */}
-<Form.Group className="mb-0" controlId="formExamDate">
-  <Form.Label>Exam Date</Form.Label>
-  <Form.Select
-    name="examDate"
-    value={formData.examDate}
-    onChange={handleInputChange}
-    required
-  >
-    <option value="">Select Exam Date</option>
-    {examDates.map((date) => (
-      <option key={date} value={date}>
-        {date}
-      </option>
-    ))}
-  </Form.Select>
-</Form.Group>
+            {/* Center Name */}
+            <Form.Group className="mb-0" controlId="formCenterName">
+              <Form.Label>Center Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="centerName"
+                placeholder="Enter Center Name"
+                value={formData.centerName}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
 
-{/* Fees */}
-<Form.Group className="mb-0" controlId="formFees">
-  <Form.Label>Fees</Form.Label>
-  <Form.Control
-    type="text"
-    name="fees"
-    value={`₹${formData.fees}`} // Assuming fees is a number or string
-    readOnly
-  />
-</Form.Group>
+            {/* Exam Date */}
+            <Form.Group className="mb-0" controlId="formExamDate">
+              <Form.Label>Exam Date</Form.Label>
+              <Form.Select
+                name="examDate"
+               
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Exam Date</option>
+                {examDates.map((date) => (
+                  <option key={date} value={date}>
+                    {date}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            {/* Fees */}
+            <Form.Group className="mb-0" controlId="formFees">
+              <Form.Label>Fees</Form.Label>
+              <Form.Control
+                type="text"
+                name="fees"
+                readOnly
+              />
+            </Form.Group>
 
 
 
             <div className="d-flex align-items-center justify-content-between">
-            <Link 
-  to="/" 
-  className="rounded-pill px-3 py-1 shadow-sm fw-semibold text-decoration-none"
-  style={{ 
-    fontSize: '16px',
-    width: 'fit-content',
-    border: '1px solid black',  // Black border
-    color: 'black',  // Black text
-    background: 'linear-gradient(to right, #a2f8c2, rgb(245, 245, 160), #a2f8c2)'
-  }}
->
-  ← Go To Login
-</Link>
+              <Link
+                to="/"
+                className="rounded-pill px-3 py-1 shadow-sm fw-semibold text-decoration-none"
+                style={{
+                  fontSize: '16px',
+                  width: 'fit-content',
+                  border: '1px solid black',  // Black border
+                  color: 'black',  // Black text
+                  background: 'linear-gradient(to right, #a2f8c2, rgb(245, 245, 160), #a2f8c2)'
+                }}
+              >
+                ← Go To Login
+              </Link>
 
               <Button variant="success" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Registering..." : "Register Student"}
