@@ -1,0 +1,62 @@
+/* src/Components/Header/Header.css */
+.profile-info {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10; /* Make sure it appears above other elements */
+  }
+  
+  /* For mobile devices */
+  @media (max-width: 768px) {
+    .profile-info {
+      position: absolute;
+      top: 50px; /* Adjust based on navbar height */
+      left: 50%; /* Center on mobile devices */
+      transform: translateX(-50%);
+      text-align: center;
+    }
+  }
+  
+  /* Ensuring the navbar text is centered */
+  .navbar-collapse {
+    display: flex;
+    justify-content: center; /* Centering the text */
+    align-items: center;
+  }
+  
+  .navbar-brand {
+    flex: 0 0 auto;
+  }
+  
+  .navbar-nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+  }
+  
+  .navbar-nav .nav-item {
+    display: inline-block;
+  }
+/* make sure the dropdown menu is nicely positioned */
+.dropdown-menu {
+  min-width: 8rem;
+}
+
+/* Remove underline from our 'as="a"' toggle */
+.profile-toggle {
+  text-decoration: none;
+}
+
+/* On small screens, keep things stacked */
+@media (max-width: 576px) {
+  .navbar .container {
+    flex-direction: column;
+  }
+
+  .navbar .text-center {
+    margin: .5rem 0;
+  }
+}
+  

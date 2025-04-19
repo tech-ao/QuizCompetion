@@ -153,7 +153,6 @@ const RegisterStudent = () => {
     }
   };
 
-
   return (
     <div className="register-student-container"><RegisterHeader />
       <div className="register-student-page registerbg-image">

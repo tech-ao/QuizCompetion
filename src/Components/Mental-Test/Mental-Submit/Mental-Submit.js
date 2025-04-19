@@ -33,8 +33,8 @@ const ManualSubmit = () => {
   return (
     <div>
       {/* Header Section */}
-      <div className="container py-4">
-        <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
+      <div className="mental-submit-container py-0">
+        <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white ">
           {/* Name and Level Inputs */}
           <div className="col-12 col-lg-8 d-flex gap-4">
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
@@ -64,13 +64,13 @@ const ManualSubmit = () => {
             Real Time: {realTime}
           </div>
         </div>
-      </div>
+      
 
       {/* Other Content */}
-      <div className="quiz-app container py-4" style={{ width: "100%", maxWidth: "1200px" }}>
+      <div className="quiz-app  py-0" style={{ width: "100%", maxWidth: "1200px" }}>
         <div className="question-section">
-          <div className="question-header d-flex justify-content-center align-items-center bg-light p-3 rounded mb-4">
-            <span>For Any Assistance Call Incharge</span>
+          <div className="question-header d-flex justify-content-center align-items-center  p-3 rounded mb-4">
+            <span style={{color:"red"}}>For Any Assistance Call Incharge</span>
           </div>
           <div className="question-body text-center mb-4">
             
@@ -79,8 +79,10 @@ const ManualSubmit = () => {
             <p className="mb-2">Answered: 7</p>
             <p className="mb-2">Not Answered: 3</p>
           </div>
+
         </div>
       </div>
+    </div>
     </div>
   );
 };

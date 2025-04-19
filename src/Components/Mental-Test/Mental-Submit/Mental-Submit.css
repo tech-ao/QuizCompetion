@@ -54,8 +54,12 @@ body {
 .header-timer {
     font-size: 1.5rem;
     font-weight: bold;
+    
 }
 
+.mental-submit-container{
+    background-color: #a2f8c2;
+}
 /* Details Section */
 .Details {
     display: flex; /* Use Flexbox */

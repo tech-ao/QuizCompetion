@@ -11,6 +11,9 @@ body {
     padding: 20px;
     gap: 20px; /* Added gap between sections */
   }
+  .mental-text-container{
+    background-color: #c6c2c2;
+  }
   
   /* Header Section */
   .header {

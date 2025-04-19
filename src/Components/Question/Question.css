@@ -64,8 +64,8 @@ body {
 
 /* Question Section */
 .question-section {
-  background-color: #a2f8c2;
-  padding: 20px;
+  background-color: #d6f9e3;
+  /* padding: 20px; */
   border-radius: 10px;
   width: 100%;
 }
@@ -75,6 +75,7 @@ body {
   justify-content: space-between;
   font-size: 1.2rem;
   margin-bottom: 20px;
+  background-color: #b2f4ca;
 }
 
 .question-body {

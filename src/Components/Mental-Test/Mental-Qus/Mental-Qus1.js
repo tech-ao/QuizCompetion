@@ -102,7 +102,7 @@ const Questions = () => {
   return (
     <div>
       {/* Header Section */}
-      <div className="container py-4">
+      <div className="mental-ques-1-container py-0">
         <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
           {/* Name and Level Inputs */}
           <div className="col-12 col-lg-8 d-flex gap-4">
@@ -133,15 +133,15 @@ const Questions = () => {
             Real Time: {realTime}
           </div>
         </div>
-      </div>
+      
 
       {/* Question Section */}
       <div
-        className="quiz-app container py-4"
+        className="quiz-app  py-0"
         style={{ width: "100%", maxWidth: "1200px" }}
       >
         <div className="question-section">
-          <div className="question-header d-flex justify-content-between align-items-center bg-light p-3 rounded mb-4">
+          <div className="question-header d-flex justify-content-between align-items-center  p-3 rounded mb-4">
             <span>Qn. No: {currentQuestion.questionNumber}</span>
             <span>Time: {formatTime(timer)}</span>
           </div>
@@ -168,6 +168,7 @@ const Questions = () => {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -44,7 +44,7 @@ const student = selectedStudent?.data
 
   return (
     <div>
-      <div className="container py-4">
+      <div className=" manuel-container py-4">
         <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
           <div className="col-12 col-lg-8 d-flex gap-4">
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
@@ -58,11 +58,11 @@ const student = selectedStudent?.data
           </div>
           <div className="col-12 col-lg-3 text-center fs-4 font-weight-bold">Real Time: {realTime}</div>
         </div>
-      </div>
-      <div className="quiz-app container py-4" style={{ width: "100%", maxWidth: "1200px" }}>
+      
+      <div className="quiz-app   py-0" style={{ width: "100%", maxWidth: "1200px" }}>
         <div className="question-section">
-          <div className="question-header d-flex justify-content-center align-items-center bg-light p-3 rounded mb-4">
-            <span>For Any Assistance Call Incharge</span>
+          <div className="question-header d-flex justify-content-center align-items-center  p-3 rounded mb-4">
+            <span style={{color:'red'}}>For Any Assistance Call Incharge</span>
           </div>
           <div className="question-body text-center mb-4">
             <p className="mb-2">Time Taken: 07:30</p>
@@ -70,11 +70,12 @@ const student = selectedStudent?.data
             <p className="mb-2">Answered: 7</p>
             <p className="mb-2">Not Answered: 3</p>
           </div>
-          <div className="navigation d-flex justify-content-center align-items-center">
+          <div className="navigation d-flex justify-content-center align-items-center p-5">
             <button className="btn btn-success" onClick={handleNextClick}>Continue Your Test Here.</button>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
