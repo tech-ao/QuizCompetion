@@ -1,40 +1,55 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getQuestions } from "../../../redux/Action/QuestionAction";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Questions = () => {
-  const [timer, setTimer] = useState(600); // Countdown timer (10 minutes in seconds)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Index for current question
-  const [realTime, setRealTime] = useState(""); // Real-time clock
-  const [currentNumber, setCurrentNumber] = useState(null); // Controls the number being displayed
-  const [isInputVisible, setIsInputVisible] = useState(false); // Controls visibility of the input box
-  const [showNextButton, setShowNextButton] = useState(false); // Controls visibility of the "Next" button
-  const navigate = useNavigate(); // Initialize navigate
+  const [timer, setTimer] = useState(600);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [realTime, setRealTime] = useState("");
+  const [currentNumber, setCurrentNumber] = useState(null);
+  const [isInputVisible, setIsInputVisible] = useState(false);
+  const [showNextButton, setShowNextButton] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Memoizing the questions array to avoid unnecessary re-renders
-  const questions = useMemo(() => [
-    { questionNumber: 1, numbers: [11, -24, 67] },
-    { questionNumber: 2, numbers: [35, 42, -15] },
-    { questionNumber: 3, numbers: [7, -9, 19] },
-    { questionNumber: 4, numbers: [28, -16, 34] },
-    { questionNumber: 5, numbers: [50, 21, -13] },
-    { questionNumber: 6, numbers: [-12, 8, 44] },
-    { questionNumber: 7, numbers: [19, -33, 10] },
-    { questionNumber: 8, numbers: [60, -45, 25] },
-    { questionNumber: 9, numbers: [14, -6, 38] },
-    { questionNumber: 10, numbers: [3, 5, -7] },
-  ], []); // Empty dependency array to ensure questions array doesn't change
+  const questionState = useSelector((state) => state.questionList);
 
-  // Countdown timer logic
+
+  useEffect(() => {
+    dispatch(getQuestions({ level: 1, pagination: { pageSize: 15, pageNumber: 1 } }));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (questionState.questions?.data?.questions) {
+      const fetchedQuestions = questionState.questions.data.questions;
+      const shuffledQuestions = fetchedQuestions.sort(() => 0.5 - Math.random());
+      setQuestions(shuffledQuestions.slice(0, 10));
+    }
+  }, [questionState]);
+
   useEffect(() => {
     const countdown = setInterval(() => {
       setTimer((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-
-    return () => clearInterval(countdown); // Cleanup interval on component unmount
+    return () => clearInterval(countdown);
   }, []);
 
-  // Real-time clock logic
+  const studentId = localStorage.getItem("studentId");
+
+
+
+  const { loading, error, selectedStudent: selectedStudent } = useSelector(
+    (state) => state.studentDetails
+  );
+
+
+  const student = selectedStudent?.data
+
+
   useEffect(() => {
     const updateClock = setInterval(() => {
       const now = new Date();
@@ -45,128 +60,101 @@ const Questions = () => {
           .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`
       );
     }, 1000);
-
-    return () => clearInterval(updateClock); // Cleanup interval on component unmount
+    return () => clearInterval(updateClock);
   }, []);
 
-  // Logic to show numbers sequentially
   useEffect(() => {
-    setIsInputVisible(false); // Hide input box initially
-    setCurrentNumber(null); // Reset the current number
+    setIsInputVisible(false);
+    setCurrentNumber(null);
+
+    const currentQ = questions[currentQuestionIndex];
+    if (!currentQ || !currentQ.numbers || !Array.isArray(currentQ.numbers)) {
+      return;
+    }
 
     let index = 0;
     const interval = setInterval(() => {
-      if (index < questions[currentQuestionIndex].numbers.length) {
-        setCurrentNumber(questions[currentQuestionIndex].numbers[index]);
+      if (index < currentQ.numbers.length) {
+        setCurrentNumber(currentQ.numbers[index]);
         index++;
       } else {
         clearInterval(interval);
-        setIsInputVisible(true); // Show input box after last number
-        setShowNextButton(true); // Show "Next" button after the last number
+        setIsInputVisible(true);
+        setShowNextButton(true);
       }
-    }, 1000); // Change number every 1 second
+    }, 1000);
 
-    return () => clearInterval(interval); // Cleanup interval on question change
-  }, [currentQuestionIndex, questions]); // Add questions to the dependency array
+    return () => clearInterval(interval);
+  }, [currentQuestionIndex, questions]);
 
-  // Format the timer into MM:SS
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // Handle navigation to the next question or the mental-submit.jsx file
   const handleNext = () => {
     if (currentQuestionIndex === questions.length - 1) {
-      navigate("/mental-submit"); // Navigate to the mental-submit.jsx file
+      navigate("/mental-submit");
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
+      setShowNextButton(false);
     }
   };
 
-  // Handle navigation to the previous question or the test-type.jsx file
   const handlePrevious = () => {
     if (currentQuestionIndex === 0) {
-      navigate("/mental-test"); // Navigate to the test-type.jsx file
+      navigate("/mental-test");
     } else {
       setCurrentQuestionIndex((prev) => prev - 1);
+      setShowNextButton(false);
     }
   };
 
-  // Get the current question
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <div>
-      {/* Header Section */}
+      {/* Header */}
       <div className="container py-4">
         <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
-          {/* Name and Level Inputs */}
           <div className="col-12 col-lg-8 d-flex gap-4">
-            <div className="d-flex flex-column flex-lg-row w-50 mb-2">
-              <label className="font-weight-bold mb-2" htmlFor="name">
-                Name:
-              </label>
-              <input
-                id="name"
-                type="text"
-                className="form-control border-0 border-bottom w-100 mt-2 ms-2"
-              />
+            <div className="w-50 mb-2">
+              <label htmlFor="name">Name:</label>
+              <input id="name" type="text" value={student.firstName} className="form-control border-0 border-bottom mt-2" />
             </div>
-            <div className="d-flex flex-column flex-lg-row w-50 mb-2">
-              <label className="font-weight-bold mb-2" htmlFor="level">
-                Level:
-              </label>
-              <input
-                id="level"
-                type="text"
-                className="form-control border-0 border-bottom w-100 mt-2 ms-2"
-              />
+            <div className="w-50 mb-2">
+              <label htmlFor="level">Level:</label>
+              <input id="level" type="text" value={student.gradeName} className="form-control border-0 border-bottom mt-2" />
             </div>
           </div>
-
-          {/* Timer Section */}
-          <div className="col-12 col-lg-3 text-center fs-4 font-weight-bold">
-            Real Time: {realTime}
-          </div>
+          <div className="col-12 col-lg-3 text-center fs-4">Real Time: {realTime}</div>
         </div>
       </div>
 
-      {/* Question Section */}
-      <div
-        className="quiz-app container py-4"
-        style={{ width: "100%", maxWidth: "1200px" }}
-      >
-        <div className="question-section">
-          <div className="question-header d-flex justify-content-between align-items-center bg-light p-3 rounded mb-4">
-            <span>Qn. No: {currentQuestion.questionNumber}</span>
-            <span>Time: {formatTime(timer)}</span>
-          </div>
-          <div className="question-body text-center mb-4">
-            {/* Render the current number */}
-            <p className="mb-2">{currentNumber}</p>
-          </div>
-          {isInputVisible && (
-            <div className="navigation d-flex justify-content-between align-items-center">
-              <button className="btn btn-primary" onClick={handlePrevious}>
-                Previous
-              </button>
-              <input
-                type="text"
-                className="form-control mx-3 w-50"
-                placeholder="Answer"
-              />
-              {showNextButton && (
-                <button className="btn btn-success" onClick={handleNext}>
-                  Next
-                </button>
-              )}
+      {/* Quiz Section */}
+      <div className="quiz-app container py-4" style={{ maxWidth: "1200px" }}>
+        {currentQuestion && (
+          <div className="question-section">
+            <div className="question-header d-flex justify-content-between align-items-center bg-light p-3 rounded mb-4">
+              <span>Qn. No: {currentQuestion.no}</span>
+              <span>Time: {formatTime(timer)}</span>
             </div>
-          )}
-        </div>
+            <div className="question-body text-center mb-4">
+              <p>{currentQuestion.questions}</p>
+              <h1>{currentNumber}</h1>
+            </div>
+            {isInputVisible && (
+              <div className="navigation d-flex justify-content-between align-items-center">
+                <button className="btn btn-primary" onClick={handlePrevious}>Previous</button>
+                <input type="text" className="form-control mx-3 w-50" placeholder="Answer" />
+                {showNextButton && (
+                  <button className="btn btn-success" onClick={handleNext}>Next</button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

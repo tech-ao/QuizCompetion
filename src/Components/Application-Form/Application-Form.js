@@ -4,6 +4,9 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { addStudentAction } from "../../redux/Action/StudentAction"
+import BASE_URL from "../../redux/Services/Config";
+import axios from "axios";
+
 import {
   fetchCountries,
   fetchGrades,
@@ -14,9 +17,11 @@ import "./Application-Form.css"; // Import the CSS file
 import RegisterHeader from "./RegisterHeader";
 import { useNavigate, Link } from "react-router-dom";
 const RegisterStudent = () => {
-  const [countries, setCountries] = useState([]);
-  const examDates = ['2025-05-10', '2025-06-15', '2025-07-20'];
-
+  const [countries, setCountries] = useState([]);  
+  const [scheduleData, setScheduleData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const scheduleId = 3; // You can replace this dynamically as needed
   const [grades, setGrades] = useState([]);
   const [genders, setGenders] = useState([]);
   const [classModes, setClassModes] = useState([]);
@@ -44,6 +49,53 @@ const RegisterStudent = () => {
 
   const dispatch = useDispatch();
 
+
+  useEffect(() => {
+    if (!scheduleId) return;
+  
+    const fetchScheduleById = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/ScheduleTime/GetById?Id=${scheduleId}`, {
+          headers: {
+            accept: "text/plain",
+            "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
+            AccessToken: "123",
+          },
+        });
+  
+        if (response.data) {
+          setScheduleData(response.data);
+        } else {
+          setScheduleData(null);
+        }
+      } catch (err) {
+        setError("Failed to load schedule data");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchScheduleById();
+  }, [scheduleId]);
+
+
+  console.log(scheduleData);
+
+  const getDateList = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dateList = [];
+  
+    while (start <= end) {
+      dateList.push(start.toISOString().split("T")[0]);
+      start.setDate(start.getDate() + 1);
+    }
+  
+    return dateList;
+  };
+
+  const examDates = getDateList(scheduleData?.data.startDate, scheduleData?.data.endDate);
+  
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -338,6 +390,7 @@ const RegisterStudent = () => {
             <Form.Group className="mb-0" controlId="formFees">
               <Form.Label>Fees</Form.Label>
               <Form.Control
+              value={scheduleData?.data.fees}
                 type="text"
                 name="fees"
                 readOnly
