@@ -1,46 +1,91 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import BASE_URL from "../../redux/Services/Config";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getQuestions } from "../../redux/Action/QuestionAction";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Question.css";
+import { fetchStudent } from "../../redux/Action/StudentAction";
 
 const Questions = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [timer, setTimer] = useState(600);
+  const [timer, setTimer] = useState(0); // dynamic now
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [realTime, setRealTime] = useState("");
   const [name, setName] = useState("");
   const [level] = useState(1);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [answer, setAnswer] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [scheduleData, setScheduleData] = useState(null);
 
-  const questionState = useSelector((state) => state.questionList);
-
+  const scheduleId = 6; // You can replace this dynamically as needed
   const studentId = localStorage.getItem("studentId");
 
-  const { loading, error, selectedStudent: selectedStudent } = useSelector(
-    (state) => state.studentDetails
-  );
+  const questionState = useSelector((state) => state.questionList);
+  const { selectedStudent } = useSelector((state) => state.studentDetails);
+  const student = selectedStudent?.data;
 
+  // Fetch student details
+  useEffect(() => {
+    if (studentId) {
+      dispatch(fetchStudent(studentId));
+    }
+  }, [dispatch, studentId]);
 
-const student = selectedStudent?.data
-
-  // Fetch questions when level changes
+  // Fetch questions based on level
   useEffect(() => {
     dispatch(getQuestions({ level: level, pagination: { pageSize: 15, pageNumber: 1 } }));
   }, [dispatch, level]);
 
-  // When API response updates, shuffle and set questions
+  // Update questions when API responds
   useEffect(() => {
-    if (questionState.questions?.data?.questions) {
+    if (questionState.questions?.data?.questions && scheduleData?.data?.manual) {
       const fetchedQuestions = questionState.questions.data.questions;
       const shuffledQuestions = fetchedQuestions.sort(() => 0.5 - Math.random());
-      setQuestions(shuffledQuestions.slice(0, 10));  // pick first 10
+      setQuestions(shuffledQuestions.slice(0, scheduleData.data.manual));
     }
-  }, [questionState]);
+  }, [questionState, scheduleData]);
+
+  // Fetch schedule time
+  useEffect(() => {
+    if (!scheduleId) return;
+
+    const fetchScheduleById = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/ScheduleTime/GetById?Id=${scheduleId}`, {
+          headers: {
+            accept: "text/plain",
+            "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
+            AccessToken: "123",
+          },
+        });
+
+        if (response.data) {
+          setScheduleData(response.data);
+        } else {
+          setScheduleData(null);
+        }
+      } catch (err) {
+        setError("Failed to load schedule data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchScheduleById();
+  }, [scheduleId]);
+
+  // Set timer after fetching schedule time
+  useEffect(() => {
+    if (scheduleData?.data?.totalTime) {
+      setTimer(Number(scheduleData.data.totalTime) * 60); // convert minutes to seconds
+    }
+  }, [scheduleData]);
 
   // Countdown timer
   useEffect(() => {
@@ -66,12 +111,14 @@ const student = selectedStudent?.data
     return () => cancelAnimationFrame(updateClock);
   }, []);
 
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+  // Format time MM:SS
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  // Navigation functions
   const handleNext = () => {
     if (currentQuestionIndex === questions.length - 1) {
       navigate("/manual-submit");
@@ -97,35 +144,28 @@ const student = selectedStudent?.data
       {/* Header Section */}
       <div className="container py-4">
         <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
-          {/* Name and Level Inputs */}
           <div className="col-12 col-lg-8 d-flex gap-4">
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
-              <label className="font-weight-bold mb-2" htmlFor="name">
-                Name:
-              </label>
+              <label className="font-weight-bold mb-2" htmlFor="name">Name:</label>
               <input
                 id="name"
                 type="text"
                 className="form-control border-0 border-bottom w-100 mt-2 ms-2"
-                value={student.firstName}
+                value={student?.firstName}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
-              <label className="font-weight-bold mb-2" htmlFor="level">
-                Level:
-              </label>
+              <label className="font-weight-bold mb-2" htmlFor="level">Level:</label>
               <input
                 id="level"
                 type="text"
                 className="form-control border-0 border-bottom w-100 mt-2 ms-2"
-                value={student.gradeName}
+                value={student?.gradeName}
                 readOnly
               />
             </div>
           </div>
-
-          {/* Timer Section */}
           <div className="col-12 col-lg-3 text-center fs-4 font-weight-bold">
             Real Time: {realTime}
           </div>
@@ -150,7 +190,7 @@ const student = selectedStudent?.data
                 ?.split(",")
                 .map((number, index) => (
                   <p className="mb-2" key={index}>{number}</p>
-              ))}
+                ))}
             </div>
 
             <div className="navigation d-flex justify-content-between align-items-center">

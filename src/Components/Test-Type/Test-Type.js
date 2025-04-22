@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchStudent } from "../../redux/Action/StudentAction";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -9,15 +10,23 @@ const TestType = () => {
   const [level, setLevel] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
+    const dispatch = useDispatch();
+  
  const studentId = localStorage.getItem("studentId");
-
-  const { loading, error, selectedStudent: selectedStudent } = useSelector(
-    (state) => state.studentDetails
-  );
-
-
-const student = selectedStudent?.data
-  // Update real-time clock
+   console.log(studentId);
+ 
+   const { loading, error, selectedStudent: selectedStudent } = useSelector(
+     (state) => state.studentDetails
+   );
+   console.log(selectedStudent);
+ 
+   const student = selectedStudent?.data
+ 
+   useEffect(() => {
+     if (studentId) {
+       dispatch(fetchStudent(studentId));
+     }
+   }, [dispatch, studentId]);
   useEffect(() => {
     const intervalId = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(intervalId); // Cleanup on unmount
@@ -45,7 +54,7 @@ const student = selectedStudent?.data
               <input
                 id="name"
                 type="text"
-                value={student.firstName}
+                value={student?.firstName}
                 onChange={(e) => setName(e.target.value)}
                 className="form-control border-0 border-bottom w-100 mt-2 ms-2"
               />
@@ -57,7 +66,7 @@ const student = selectedStudent?.data
               <input
                 id="level"
                 type="text"
-                value={student.gradeName}
+                value={student?.gradeName}
                 onChange={(e) => setLevel(e.target.value)}
                 className="form-control border-0 border-bottom w-100 mt-2 ms-2"
               />

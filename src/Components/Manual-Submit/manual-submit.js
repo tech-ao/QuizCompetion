@@ -1,22 +1,31 @@
 import { useState, useEffect, useRef  } from "react";
-import { useSelector } from "react-redux";
+import { useSelector ,useDispatch} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./manual-submit.css";
-
+import { fetchStudent } from "../../redux/Action/StudentAction";
 function ManualSubmit() {
   const [realTime, setRealTime] = useState("");
   const navigate = useNavigate();
   const clockRef = useRef(null);
 
+  const dispatch = useDispatch();
+  
   const studentId = localStorage.getItem("studentId");
-
-  const { loading, error, selectedStudent: selectedStudent } = useSelector(
-    (state) => state.studentDetails
-  );
-
-
-const student = selectedStudent?.data
+    console.log(studentId);
+  
+    const { loading, error, selectedStudent: selectedStudent } = useSelector(
+      (state) => state.studentDetails
+    );
+    console.log(selectedStudent);
+  
+    const student = selectedStudent?.data
+  
+    useEffect(() => {
+      if (studentId) {
+        dispatch(fetchStudent(studentId));
+      }
+    }, [dispatch, studentId]);
 
   useEffect(() => {
     const updateClock = () => {
@@ -49,11 +58,11 @@ const student = selectedStudent?.data
           <div className="col-12 col-lg-8 d-flex gap-4">
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
               <label className="font-weight-bold mb-2" htmlFor="name">Name:</label>
-              <input id="name" type="text" value={student.firstName} className="form-control border-0 border-bottom w-100 mt-2 ms-2" />
+              <input id="name" type="text" value={student?.firstName} className="form-control border-0 border-bottom w-100 mt-2 ms-2" />
             </div>
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
               <label className="font-weight-bold mb-2" htmlFor="level">Level:</label>
-              <input id="level" type="text" value={student.gradeName}className="form-control border-0 border-bottom w-100 mt-2 ms-2" />
+              <input id="level" type="text" value={student?.gradeName}className="form-control border-0 border-bottom w-100 mt-2 ms-2" />
             </div>
           </div>
           <div className="col-12 col-lg-3 text-center fs-4 font-weight-bold">Real Time: {realTime}</div>

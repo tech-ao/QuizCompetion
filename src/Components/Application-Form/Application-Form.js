@@ -21,7 +21,7 @@ const RegisterStudent = () => {
   const [scheduleData, setScheduleData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const scheduleId = 3; // You can replace this dynamically as needed
+  const scheduleId = 5; // You can replace this dynamically as needed
   const [grades, setGrades] = useState([]);
   const [genders, setGenders] = useState([]);
   const [classModes, setClassModes] = useState([]);
