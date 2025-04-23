@@ -97,7 +97,7 @@ const LoginPage = () => {
             {loading ? "Logging in..." : "Login"}
           </button>
           <p className="text-center mb-0">
-            <a href="/forgot-password" className="text-danger text-decoration-none">
+            <a href="/forgotPassword" className="text-danger text-decoration-none">
               Forgot Password?
             </a>
           </p>

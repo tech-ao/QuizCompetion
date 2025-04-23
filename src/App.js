@@ -12,6 +12,7 @@ import MentalQus from "./Components/Mental-Test/Mental-Qus/Mental-Qus1";
 import MentalQus2 from "./Components/Mental-Test/Mental-Qus/Mental-Qus2";
 import MentalAns from "./Components/Mental-Test/Mental-Qus/Mental-Ans";
 import MentalSubmit from "./Components/Mental-Test/Mental-Submit/Mental-Submit";
+import ForgotPassword from "./Components/Application-Form/ForgotPassword";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Route path="/mental-qus2" element={<MentalQus2 />} />
       <Route path="/mental-ans" element={<MentalAns />} />
       <Route path="/mental-submit" element={<MentalSubmit />} />
+      <Route path="/forgotPassword" element={<ForgotPassword />} />
     </Routes>
   );
 }

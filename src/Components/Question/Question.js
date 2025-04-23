@@ -12,7 +12,7 @@ const Questions = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [timer, setTimer] = useState(0); // dynamic now
+  const [timer, setTimer] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [realTime, setRealTime] = useState("");
   const [name, setName] = useState("");
@@ -23,26 +23,39 @@ const Questions = () => {
   const [questions, setQuestions] = useState([]);
   const [scheduleData, setScheduleData] = useState(null);
 
-  const scheduleId = 6; // You can replace this dynamically as needed
+  const [examId, setExamId] = useState(null);
+  const [onExamId, setOnExamId] = useState(null);
+
+  const scheduleId = 6;
   const studentId = localStorage.getItem("studentId");
 
   const questionState = useSelector((state) => state.questionList);
   const { selectedStudent } = useSelector((state) => state.studentDetails);
   const student = selectedStudent?.data;
 
-  // Fetch student details
+  const COMMON_HEADERS = {
+    Accept: "text/plain",
+    "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
+    AccessToken: "123",
+    "Content-Type": "application/json",
+  };
+  
+  const getHeaders = () => ({
+    ...COMMON_HEADERS,
+  });
+  
+
+
   useEffect(() => {
     if (studentId) {
       dispatch(fetchStudent(studentId));
     }
   }, [dispatch, studentId]);
 
-  // Fetch questions based on level
   useEffect(() => {
     dispatch(getQuestions({ level: level, pagination: { pageSize: 15, pageNumber: 1 } }));
   }, [dispatch, level]);
 
-  // Update questions when API responds
   useEffect(() => {
     if (questionState.questions?.data?.questions && scheduleData?.data?.manual) {
       const fetchedQuestions = questionState.questions.data.questions;
@@ -51,10 +64,8 @@ const Questions = () => {
     }
   }, [questionState, scheduleData]);
 
-  // Fetch schedule time
   useEffect(() => {
     if (!scheduleId) return;
-
     const fetchScheduleById = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/ScheduleTime/GetById?Id=${scheduleId}`, {
@@ -64,7 +75,6 @@ const Questions = () => {
             AccessToken: "123",
           },
         });
-
         if (response.data) {
           setScheduleData(response.data);
         } else {
@@ -76,18 +86,15 @@ const Questions = () => {
         setLoading(false);
       }
     };
-
     fetchScheduleById();
   }, [scheduleId]);
 
-  // Set timer after fetching schedule time
   useEffect(() => {
     if (scheduleData?.data?.totalTime) {
-      setTimer(Number(scheduleData.data.totalTime) * 60); // convert minutes to seconds
+      setTimer(Number(scheduleData.data.totalTime) * 60);
     }
   }, [scheduleData]);
 
-  // Countdown timer
   useEffect(() => {
     const countdown = setInterval(() => {
       setTimer((prev) => (prev > 0 ? prev - 1 : 0));
@@ -95,7 +102,6 @@ const Questions = () => {
     return () => clearInterval(countdown);
   }, []);
 
-  // Real-time clock
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
@@ -111,29 +117,119 @@ const Questions = () => {
     return () => cancelAnimationFrame(updateClock);
   }, []);
 
-  // Format time MM:SS
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // Navigation functions
-  const handleNext = () => {
+  const handleNext = async () => {
+    if (questions.length === 0) return;
+
+    const currentQuestion = questions[currentQuestionIndex];
+    const now = new Date().toISOString();
+
+    if (examId === null) {
+      // First time — CREATE
+      try {
+        const response = await fetch(`${BASE_URL}/Exam/Create`, {
+          method: "POST",
+          headers: getHeaders(),
+          body: JSON.stringify({
+            studentId: parseInt(studentId),
+            level: level,
+            scheduleTimeId: scheduleId,
+            questionId: currentQuestion.id,
+            sNo: currentQuestion.no,
+            answer: answer,
+            onExamCreatedOn: now,
+            examCreatedOn: now,
+          }),
+        });
+
+        if (!response.ok) throw new Error("Failed to create exam");
+
+        const data = await response.json();
+        setExamId(data.data.id);
+        setOnExamId(data.data.onExamId);
+      } catch (error) {
+        console.error("Create failed", error);
+        return;
+      }
+    } else {
+      // From second time — UPDATE
+      try {
+        const response = await fetch(`http://srimathicare.in:8081/api/Exam/Update`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            examId: examId,
+            onExamId: onExamId,
+            studentId: parseInt(studentId),
+            level: level,
+            scheduleTimeId: scheduleId,
+            questionId: currentQuestion.id,
+            sNo: currentQuestion.no,
+            answer: answer,
+            onExamCreatedOn: now,
+            examCreatedOn: now,
+          }),
+        });
+
+        if (!response.ok) throw new Error("Failed to update exam");
+      } catch (error) {
+        console.error("Update failed", error);
+        return;
+      }
+    }
+
     if (currentQuestionIndex === questions.length - 1) {
       navigate("/manual-submit");
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
-      setAnswer(""); // Clear answer on next
+      setAnswer("");
     }
   };
 
-  const handlePrevious = () => {
+  const handlePrevious = async () => {
+    if (questions.length === 0) return;
+
+    const currentQuestion = questions[currentQuestionIndex];
+    const now = new Date().toISOString();
+
+    if (examId !== null) {
+      try {
+        const response = await fetch(`${BASE_URL}/Exam/Update`, {
+           method: "PUT",
+        headers: getHeaders(),
+          body: JSON.stringify({
+            examId: examId,
+            onExamId: onExamId,
+            studentId: parseInt(studentId),
+            level: level,
+            scheduleTimeId: scheduleId,
+            questionId: currentQuestion.id,
+            sNo: currentQuestion.no,
+            answer: answer,
+            onExamCreatedOn: now,
+            examCreatedOn: now,
+          }),
+        });
+
+        if (!response.ok) throw new Error("Failed to update exam");
+      } catch (error) {
+        console.error("Update failed", error);
+        return;
+      }
+    }
+
     if (currentQuestionIndex === 0) {
       navigate("/test-type");
     } else {
       setCurrentQuestionIndex((prev) => prev - 1);
-      setAnswer(""); // Clear answer on previous
+      setAnswer("");
     }
   };
 
@@ -141,29 +237,19 @@ const Questions = () => {
 
   return (
     <div>
-      {/* Header Section */}
+      {/* Header */}
       <div className="container py-4">
         <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
           <div className="col-12 col-lg-8 d-flex gap-4">
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
               <label className="font-weight-bold mb-2" htmlFor="name">Name:</label>
-              <input
-                id="name"
-                type="text"
-                className="form-control border-0 border-bottom w-100 mt-2 ms-2"
-                value={student?.firstName}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <input id="name" type="text" className="form-control border-0 border-bottom w-100 mt-2 ms-2"
+                value={student?.firstName} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
               <label className="font-weight-bold mb-2" htmlFor="level">Level:</label>
-              <input
-                id="level"
-                type="text"
-                className="form-control border-0 border-bottom w-100 mt-2 ms-2"
-                value={student?.gradeName}
-                readOnly
-              />
+              <input id="level" type="text" className="form-control border-0 border-bottom w-100 mt-2 ms-2"
+                value={student?.gradeName} readOnly />
             </div>
           </div>
           <div className="col-12 col-lg-3 text-center fs-4 font-weight-bold">
@@ -186,27 +272,16 @@ const Questions = () => {
             </div>
 
             <div className="question-body text-center mb-4">
-              {currentQuestion?.questions
-                ?.split(",")
-                .map((number, index) => (
-                  <p className="mb-2" key={index}>{number}</p>
-                ))}
+              {currentQuestion?.questions?.split(",").map((number, index) => (
+                <p className="mb-2" key={index}>{number}</p>
+              ))}
             </div>
 
             <div className="navigation d-flex justify-content-between align-items-center">
-              <button className="btn btn-primary" onClick={handlePrevious}>
-                Previous
-              </button>
-              <input
-                type="text"
-                className="form-control mx-3 w-50"
-                placeholder="Answer"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-              />
-              <button className="btn btn-success" onClick={handleNext}>
-                Next
-              </button>
+              <button className="btn btn-primary" onClick={handlePrevious}>Previous</button>
+              <input type="text" className="form-control mx-3 w-50" placeholder="Answer"
+                value={answer} onChange={(e) => setAnswer(e.target.value)} />
+              <button className="btn btn-success" onClick={handleNext}>Next</button>
             </div>
           </div>
         ) : (
