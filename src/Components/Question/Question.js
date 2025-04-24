@@ -237,9 +237,10 @@ const Questions = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div className="container py-4">
-        <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
+      {/* Header Section */}
+      <div className="question-container py-0">
+        <div className="row justify-content-between align-items-center mb-0 p-1 header-gradient text-white rounded">
+          {/* Name and Level Inputs */}
           <div className="col-12 col-lg-8 d-flex gap-4">
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
               <label className="font-weight-bold mb-2" htmlFor="name">Name:</label>
@@ -256,17 +257,17 @@ const Questions = () => {
             Real Time: {realTime}
           </div>
         </div>
-      </div>
+      
 
       {/* Question Section */}
-      <div className="quiz-app container py-4" style={{ width: "100%", maxWidth: "1200px" }}>
+      <div className="quiz-app  py-4" style={{ width: "100%", maxWidth: "1200px" }}>
         {loading ? (
           <div className="text-center">Loading questions...</div>
         ) : error ? (
           <div className="text-danger text-center">Error loading questions.</div>
         ) : questions.length > 0 ? (
           <div className="question-section">
-            <div className="question-header d-flex justify-content-between align-items-center bg-light p-3 rounded mb-4">
+            <div className="question-header d-flex justify-content-between align-items-center  p-3  mb-1">
               <span>Qn. No: {currentQuestion?.no}</span>
               <span>Time: {formatTime(timer)}</span>
             </div>
@@ -288,6 +289,7 @@ const Questions = () => {
           <div className="text-center">No questions available.</div>
         )}
       </div>
+    </div>
     </div>
   );
 };

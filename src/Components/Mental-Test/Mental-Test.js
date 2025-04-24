@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Header from "../LoginPage/Header";
+import "./Mental-Test.css" 
 
 const TestType = () => {
   const [name, setName] = useState("");
@@ -24,8 +26,10 @@ const TestType = () => {
 
   return (
     <div>
+     ,
+     <Header/> 
       {/* Header Section */}
-      <div className="container py-4">
+      <div className="mental-text-container py-0">
         <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
           {/* Name and Level Inputs */}
           <div className="col-12 col-lg-8 d-flex gap-4">
@@ -60,10 +64,10 @@ const TestType = () => {
             Real Time: {formatTime(currentTime)}
           </div>
         </div>
-      </div>
+     
 
       {/* Manual and Mental Boxes Section */}
-      <div className="container">
+      <div className="py-3">
         <div className="row mt-4 justify-content-center" style={{ maxWidth: "1400px", width: "100%", margin: "0 auto" }}>
           {/* Manual Section */}
           <div className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-3">
@@ -89,6 +93,7 @@ const TestType = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
