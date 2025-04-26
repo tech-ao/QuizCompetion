@@ -46,7 +46,7 @@ const student = selectedStudent?.data
               <p>D.O.B : {student.dob}</p>
               <p>Email : {student.email}</p>
               <p>Organization : {student.centerName}</p>
-              <p>Fees : {student.fees}</p>
+              {/* <p>Fees : {student.fees}</p> */}
               <div className="image-section">
                 <img
                   src={student.imageUrl || "https://via.placeholder.com/150"}

@@ -155,7 +155,7 @@ useEffect(() => {
         studentId: parseInt(studentId),
         level: level,
         scheduleTimeId: scheduleId,
-        questionId: currentQuestion.id,
+        questionId: currentQuestion.questionId,
         sNo: currentQuestion.no,
         answer: answer,
         onExamCreatedOn: now,
@@ -173,12 +173,13 @@ useEffect(() => {
         if (!response.ok) throw new Error("Failed to create exam");
   
         const data = await response.json();
-        setExamId(data.data.id);
-        setOnExamId(data.data.onExamId);
+        setExamId(data.data[0].examId);
+        setOnExamId(data.data[0].onExamId);
+        
       } else {
         // Update
-        const response = await fetch(`${BASE_URL}/Exam/Update`, {
-          method: "PUT",
+        const response = await fetch(`${BASE_URL}/Exam/Create`, {
+          method: "POST",
           headers: getHeaders(),
           body: JSON.stringify({
             ...payload,
@@ -196,7 +197,8 @@ useEffect(() => {
   
     // ✅ 3. Navigate if last question, else move to next
     if (currentQuestionIndex === questions.length - 1) {
-      navigate("/manual-submit");
+    navigate("/manual-submit", { state: { examId: examId } });
+
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
       setAnswer("");
@@ -225,7 +227,7 @@ useEffect(() => {
             studentId: parseInt(studentId),
             level: level,
             scheduleTimeId: scheduleId,
-            questionId: currentQuestion.id,
+            questionId: currentQuestion.questionId,
             sNo: currentQuestion.no,
             answer: answer,
             onExamCreatedOn: now,

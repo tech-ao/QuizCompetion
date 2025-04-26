@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "../LoginPage/Header";
@@ -9,6 +10,17 @@ const TestType = () => {
   const [level, setLevel] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
+
+  const studentId = localStorage.getItem("studentId");
+ 
+  const { loading, error, selectedStudent: selectedStudent } = useSelector(
+    (state) => state.studentDetails
+  );
+
+  const student = selectedStudent?.data
+
+  console.log(student);
+  
 
   // Update real-time clock
   useEffect(() => {
