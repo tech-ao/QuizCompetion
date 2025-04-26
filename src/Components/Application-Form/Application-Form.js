@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Row, Col } from "react-bootstrap";
+import { Button, Form, Row, Col ,Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { addStudentAction } from "../../redux/Action/StudentAction"
 import BASE_URL from "../../redux/Services/Config";
+import { Modal } from "react-bootstrap";
+
 import axios from "axios";
 
 import {
@@ -17,17 +19,72 @@ import "./Application-Form.css"; // Import the CSS file
 import RegisterHeader from "./RegisterHeader";
 import { useNavigate, Link } from "react-router-dom";
 const RegisterStudent = () => {
-  const [countries, setCountries] = useState([]);  
+  const [countries, setCountries] = useState([]);
   const [scheduleData, setScheduleData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const scheduleId = 5; // You can replace this dynamically as needed
+  const scheduleId = 8; // You can replace this dynamically as needed
   const [grades, setGrades] = useState([]);
   const [genders, setGenders] = useState([]);
   const [classModes, setClassModes] = useState([]);
   const [preview, setPreview] = useState(null);
   const navigate = useNavigate();
   const [birthCertificatePreview, setBirthCertificatePreview] = useState(null);
+
+
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+const [qrImageUrl, setQrImageUrl] = useState(null);
+const [loadingQR, setLoadingQR] = useState(false);
+
+const COMMON_HEADERS = {
+  Accept: "text/plain",
+  "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
+  AccessToken: "123",
+  "Content-Type": "application/json",
+};
+
+const getHeaders = () => ({
+  ...COMMON_HEADERS,
+});
+
+
+const handlePaymentModalOpen = () => {
+  setShowPaymentModal(true);
+  setQrImageUrl(null); // Reset previous QR if any
+};
+
+const handlePaymentModalClose = () => {
+  setShowPaymentModal(false);
+  setQrImageUrl(null);
+};
+
+const handleProceedToPay = async () => {
+  try {
+    setLoadingQR(true);
+
+    const scheduledTimeId = scheduleData?.data?.scheduledTimeId || 9; // fallback to 9 if not available
+    console.log(BASE_URL); // if you want to check BASE_URL in console
+
+    const response = await axios.get(
+      `${BASE_URL}/ScheduleTime/GetQRDocumentFileByScheduledTime?ScheduledTimeId=${scheduledTimeId}`,
+      {
+        headers: getHeaders(),
+      }
+    );
+
+    if (response.data?.data) {
+      setQrImageUrl(response.data.data); // assuming API returns direct image URL
+    } else {
+      toast.error("Failed to load QR Code!");
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error("Error fetching QR Code.");
+  } finally {
+    setLoadingQR(false);
+  }
+};
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -37,7 +94,7 @@ const RegisterStudent = () => {
     grade: null,
     address: "",
     gender: null,
-    centerName:"",
+    centerName: "",
     studyModeId: 1,
     country: "",
     isCompetition: true,
@@ -52,7 +109,7 @@ const RegisterStudent = () => {
 
   useEffect(() => {
     if (!scheduleId) return;
-  
+
     const fetchScheduleById = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/ScheduleTime/GetById?Id=${scheduleId}`, {
@@ -62,7 +119,7 @@ const RegisterStudent = () => {
             AccessToken: "123",
           },
         });
-  
+
         if (response.data) {
           setScheduleData(response.data);
         } else {
@@ -74,7 +131,7 @@ const RegisterStudent = () => {
         setLoading(false);
       }
     };
-  
+
     fetchScheduleById();
   }, [scheduleId]);
 
@@ -85,17 +142,17 @@ const RegisterStudent = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const dateList = [];
-  
+
     while (start <= end) {
       dateList.push(start.toISOString().split("T")[0]);
       start.setDate(start.getDate() + 1);
     }
-  
+
     return dateList;
   };
 
   const examDates = getDateList(scheduleData?.data.startDate, scheduleData?.data.endDate);
-  
+
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -190,7 +247,7 @@ const RegisterStudent = () => {
           isCompetition: true,
           statusId: 3,
           createdBy: 1,
-          centerName:""
+          centerName: ""
         });
         setPreview(null);
         setBirthCertificatePreview(null);
@@ -325,34 +382,34 @@ const RegisterStudent = () => {
               </Row>
             </Form.Group>
             <Form.Group className="mb-3" controlId="formCountry">
-            <Form.Label>Country</Form.Label>
-            <Form.Select
-              name="country"
-              value={formData.country}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Select Country</option>
-              {countries.map((country, index) => (
-                <option key={index} value={country.item1}>
-                  {country.item2}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+              <Form.Label>Country</Form.Label>
+              <Form.Select
+                name="country"
+                value={formData.country}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Country</option>
+                {countries.map((country, index) => (
+                  <option key={index} value={country.item1}>
+                    {country.item2}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
             <Form.Group className="mb-3" controlId="formAddress">
-            <Form.Label>Address</Form.Label>
-            <Form.Control
-              as="textarea"
-              name="address"
-              rows={3}
-              placeholder="Enter address"
-              value={formData.address}
-              onChange={handleInputChange}
-              required
-            />
-          </Form.Group>
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="address"
+                rows={3}
+                placeholder="Enter address"
+                value={formData.address}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
 
             {/* Center Name */}
             <Form.Group className="mb-0" controlId="formCenterName">
@@ -372,7 +429,7 @@ const RegisterStudent = () => {
               <Form.Label>Exam Date</Form.Label>
               <Form.Select
                 name="examDate"
-               
+
                 onChange={handleInputChange}
                 required
               >
@@ -385,17 +442,21 @@ const RegisterStudent = () => {
               </Form.Select>
             </Form.Group>
 
-            {/* Fees */}
             <Form.Group className="mb-0" controlId="formFees">
               <Form.Label>Fees</Form.Label>
-              <Form.Control
-              value={scheduleData?.data.fees}
-                type="text"
-                name="fees"
-                readOnly
-              />
+              <div className="d-flex align-items-center">
+                <Form.Control
+                  value={scheduleData?.data.fees}
+                  type="text"
+                  name="fees"
+                  readOnly
+                  style={{ marginRight: "10px" }}
+                />
+                <Button variant="primary" onClick={handlePaymentModalOpen}>
+                  Pay Fees
+                </Button>
+              </div>
             </Form.Group>
-
 
 
             <div className="d-flex align-items-center justify-content-between">
@@ -420,6 +481,50 @@ const RegisterStudent = () => {
           </Form>
         </div>
       </div>
+      <Modal show={showPaymentModal} onHide={handlePaymentModalClose} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Pay Fees</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {!qrImageUrl ? (
+      <>
+        <p>Are you sure you want to proceed with payment of <strong>₹{scheduleData?.data.fees}</strong>?</p>
+      </>
+    ) : (
+      <div className="text-center">
+        <h5>Scan QR Code to Pay</h5>
+        <img
+          src={`data:image/png;base64,${qrImageUrl}`}
+          alt="QR Code"
+          style={{ width: "300px", height: "300px", objectFit: "contain" }}
+        />
+      </div>
+    )}
+
+    {loadingQR && (
+      <div className="text-center mt-3">
+        <Spinner animation="border" variant="primary" />
+      </div>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    {!qrImageUrl ? (
+      <>
+        <Button variant="secondary" onClick={handlePaymentModalClose}>
+          Cancel
+        </Button>
+        <Button variant="success" onClick={handleProceedToPay} disabled={loadingQR}>
+          {loadingQR ? "Loading..." : "Proceed to Pay"}
+        </Button>
+      </>
+    ) : (
+      <Button variant="secondary" onClick={handlePaymentModalClose}>
+        Close
+      </Button>
+    )}
+  </Modal.Footer>
+</Modal>
+
     </div>
   );
 };

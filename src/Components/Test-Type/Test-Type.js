@@ -15,12 +15,10 @@ const TestType = () => {
     const dispatch = useDispatch();
   
  const studentId = localStorage.getItem("studentId");
-   console.log(studentId);
  
    const { loading, error, selectedStudent: selectedStudent } = useSelector(
      (state) => state.studentDetails
    );
-   console.log(selectedStudent);
  
    const student = selectedStudent?.data
  

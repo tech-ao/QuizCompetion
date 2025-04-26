@@ -7,6 +7,8 @@ import { getQuestions } from "../../redux/Action/QuestionAction";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Question.css";
 import { fetchStudent } from "../../redux/Action/StudentAction";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Questions = () => {
   const dispatch = useDispatch();
@@ -26,7 +28,7 @@ const Questions = () => {
   const [examId, setExamId] = useState(null);
   const [onExamId, setOnExamId] = useState(null);
 
-  const scheduleId = 6;
+  const scheduleId = 8;
   const studentId = localStorage.getItem("studentId");
 
   const questionState = useSelector((state) => state.questionList);
@@ -44,6 +46,8 @@ const Questions = () => {
     ...COMMON_HEADERS,
   });
   
+  
+  
 
 
   useEffect(() => {
@@ -56,14 +60,23 @@ const Questions = () => {
     dispatch(getQuestions({ level: level, pagination: { pageSize: 15, pageNumber: 1 } }));
   }, [dispatch, level]);
 
-  useEffect(() => {
-    if (questionState.questions?.data?.questions && scheduleData?.data?.manual) {
-      const fetchedQuestions = questionState.questions.data.questions;
-      const shuffledQuestions = fetchedQuestions.sort(() => 0.5 - Math.random());
-      setQuestions(shuffledQuestions.slice(0, scheduleData.data.manual));
-    }
-  }, [questionState, scheduleData]);
+const manualQuestion = scheduleData?.data.manual
 
+  
+
+useEffect(() => {
+  if (questionState.questions?.data?.questions) {
+    const fetchedQuestions = questionState.questions.data.questions;
+    const shuffledQuestions = fetchedQuestions.sort(() => 0.5 - Math.random());
+    const limitedQuestions = shuffledQuestions.slice(0, manualQuestion || shuffledQuestions.length);
+    
+    setQuestions(limitedQuestions);
+  }
+}, [questionState, manualQuestion]);
+
+
+ 
+  
   useEffect(() => {
     if (!scheduleId) return;
     const fetchScheduleById = async () => {
@@ -123,68 +136,65 @@ const Questions = () => {
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
+
   const handleNext = async () => {
     if (questions.length === 0) return;
-
+  
     const currentQuestion = questions[currentQuestionIndex];
     const now = new Date().toISOString();
-
-    if (examId === null) {
-      // First time — CREATE
-      try {
+  
+    // ✅ 1. Prevent moving forward if answer is empty
+    if (!answer || answer.trim() === "") {
+      toast.error("Please enter an answer before proceeding.");
+      return;
+    }
+  
+    // ✅ 2. Save or Update the answer
+    try {
+      const payload = {
+        studentId: parseInt(studentId),
+        level: level,
+        scheduleTimeId: scheduleId,
+        questionId: currentQuestion.id,
+        sNo: currentQuestion.no,
+        answer: answer,
+        onExamCreatedOn: now,
+        examCreatedOn: now,
+      };
+  
+      if (examId === null) {
+        // Create
         const response = await fetch(`${BASE_URL}/Exam/Create`, {
           method: "POST",
           headers: getHeaders(),
-          body: JSON.stringify({
-            studentId: parseInt(studentId),
-            level: level,
-            scheduleTimeId: scheduleId,
-            questionId: currentQuestion.id,
-            sNo: currentQuestion.no,
-            answer: answer,
-            onExamCreatedOn: now,
-            examCreatedOn: now,
-          }),
+          body: JSON.stringify(payload),
         });
-
+  
         if (!response.ok) throw new Error("Failed to create exam");
-
+  
         const data = await response.json();
         setExamId(data.data.id);
         setOnExamId(data.data.onExamId);
-      } catch (error) {
-        console.error("Create failed", error);
-        return;
-      }
-    } else {
-      // From second time — UPDATE
-      try {
-        const response = await fetch(`http://srimathicare.in:8081/api/Exam/Update`, {
+      } else {
+        // Update
+        const response = await fetch(`${BASE_URL}/Exam/Update`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: getHeaders(),
           body: JSON.stringify({
+            ...payload,
             examId: examId,
             onExamId: onExamId,
-            studentId: parseInt(studentId),
-            level: level,
-            scheduleTimeId: scheduleId,
-            questionId: currentQuestion.id,
-            sNo: currentQuestion.no,
-            answer: answer,
-            onExamCreatedOn: now,
-            examCreatedOn: now,
           }),
         });
-
+  
         if (!response.ok) throw new Error("Failed to update exam");
-      } catch (error) {
-        console.error("Update failed", error);
-        return;
       }
+    } catch (error) {
+      console.error("Error saving answer:", error);
+      return;
     }
-
+  
+    // ✅ 3. Navigate if last question, else move to next
     if (currentQuestionIndex === questions.length - 1) {
       navigate("/manual-submit");
     } else {
@@ -199,11 +209,16 @@ const Questions = () => {
     const currentQuestion = questions[currentQuestionIndex];
     const now = new Date().toISOString();
 
+    console.log(examId);
+    console.log(onExamId);
+    
+    
+
     if (examId !== null) {
       try {
         const response = await fetch(`${BASE_URL}/Exam/Update`, {
-           method: "PUT",
-        headers: getHeaders(),
+          method: "PUT",
+          headers: getHeaders(),
           body: JSON.stringify({
             examId: examId,
             onExamId: onExamId,
@@ -234,6 +249,8 @@ const Questions = () => {
   };
 
   const currentQuestion = questions[currentQuestionIndex];
+
+  
 
   return (
     <div>
@@ -268,7 +285,7 @@ const Questions = () => {
         ) : questions.length > 0 ? (
           <div className="question-section">
             <div className="question-header d-flex justify-content-between align-items-center  p-3  mb-1">
-              <span>Qn. No: {currentQuestion?.no}</span>
+              <span>Qn. No: {currentQuestionIndex+1}</span>
               <span>Time: {formatTime(timer)}</span>
             </div>
 
