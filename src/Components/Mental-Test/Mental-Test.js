@@ -1,28 +1,33 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchStudent } from "../../redux/Action/StudentAction";
+
 import "bootstrap/dist/css/bootstrap.min.css";
-import Header from "../LoginPage/Header";
-import "./Mental-Test.css" 
+import Header from "../LoginPage/Header"; // Adjust path if Header is elsewhere
+import './Mental-Test.css'
 
 const TestType = () => {
   const [name, setName] = useState("");
   const [level, setLevel] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const studentId = localStorage.getItem("studentId");
- 
+
   const { loading, error, selectedStudent: selectedStudent } = useSelector(
     (state) => state.studentDetails
   );
 
-  const student = selectedStudent?.data
+  const student = selectedStudent?.data;
 
-  console.log(student);
-  
+  useEffect(() => {
+    if (studentId) {
+      dispatch(fetchStudent(studentId));
+    }
+  }, [dispatch, studentId]);
 
-  // Update real-time clock
   useEffect(() => {
     const intervalId = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(intervalId); // Cleanup on unmount
@@ -36,15 +41,19 @@ const TestType = () => {
     navigate("/mental-qus1"); // Navigate to /mental-qus1 route
   };
 
+  // Handle Manual click event to navigate to Question page
+  const handleManualClick = () => {
+    navigate("/question"); // Navigate to /question route
+  };
+
   return (
     <div>
-     ,
-     <Header/> 
+      {/* Header Component */}
+      <Header student={student} />
       {/* Header Section */}
-      <div className="mental-text-container py-0">
-        <div className="row justify-content-between align-items-center mb-4 p-3 header-gradient text-white rounded">
-          {/* Name and Level Inputs */}
-          <div className="col-12 col-lg-8 d-flex gap-4">
+      <div className="Test-type-container py-0">
+        <div className="row justify-content-between align-items-center mb-2 p-1 header-gradient text-white rounded bg-primary">
+          <div className="col-12 col-lg-8 d-flex gap-5">
             <div className="d-flex flex-column flex-lg-row w-50 mb-2">
               <label className="font-weight-bold mb-2" htmlFor="name">
                 Name:
@@ -52,7 +61,7 @@ const TestType = () => {
               <input
                 id="name"
                 type="text"
-                value={name}
+                value={student?.firstName}
                 onChange={(e) => setName(e.target.value)}
                 className="form-control border-0 border-bottom w-100 mt-2 ms-2"
               />
@@ -64,48 +73,46 @@ const TestType = () => {
               <input
                 id="level"
                 type="text"
-                value={level}
+                value={student?.gradeName}
                 onChange={(e) => setLevel(e.target.value)}
                 className="form-control border-0 border-bottom w-100 mt-2 ms-2"
               />
             </div>
           </div>
 
-          {/* Timer Section */}
           <div className="col-12 col-lg-3 text-center fs-4 font-weight-bold">
-            Real Time: {formatTime(currentTime)}
+            Time: {formatTime(currentTime)}
           </div>
         </div>
-     
 
-      {/* Manual and Mental Boxes Section */}
-      <div className="py-3">
-        <div className="row mt-4 justify-content-center" style={{ maxWidth: "1400px", width: "100%", margin: "0 auto" }}>
+        <div
+          className="row mt-4 justify-content-center"
+          style={{ maxWidth: "1400px", width: "100%", margin: "0 auto" }}
+        >
           {/* Manual Section */}
-          <div className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-3">
+          <div
+            className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-5"
+            onClick={handleManualClick}
+          >
             <div
-              className="box p-4 d-flex justify-content-center align-items-center  bg-success text-white rounded shadow-sm"
-              style={{ height: "150px", width: "150px" }}
+              className="box p-4 d-flex justify-content-center align-items-center bg-white text-dark rounded shadow-sm"
+              style={{ height: "150px", width: "150px", cursor: "pointer" }}
             >
               <p className="mb-0">Manual</p>
             </div>
           </div>
 
           {/* Mental Section */}
-          <div
-            className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-3"
-            onClick={handleMentalClick}
-          >
+          <div className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-5" onClick={handleMentalClick}>
             <div
-              className="box p-4 d-flex justify-content-center align-items-center  bg-white text-dark rounded shadow-sm"
-              style={{ height: "150px", width: "150px" }}
+              className="box p-4 d-flex justify-content-center align-items-center bg-success text-white rounded shadow-sm"
+              style={{ height: "150px", width: "150px", cursor: "pointer" }}
             >
               <p className="mb-0">Mental</p>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };
