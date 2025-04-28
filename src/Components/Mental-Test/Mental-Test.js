@@ -5,7 +5,7 @@ import { fetchStudent } from "../../redux/Action/StudentAction";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "../LoginPage/Header"; // Adjust path if Header is elsewhere
-import './Mental-Test.css'
+
 
 const TestType = () => {
   const [name, setName] = useState("");

@@ -47,6 +47,19 @@ const getHeaders = () => ({
   ...COMMON_HEADERS,
 });
 
+const [show, setShow] = useState(false);
+
+  const handleRegisterSuccess = () => {
+    // Call this function once registration and payment are successful
+    setShow(true);
+   
+  };
+
+  const handleClose = () =>{
+    setShow(false);
+    navigate('/')
+  } 
+
 
 const handlePaymentModalOpen = () => {
   setShowPaymentModal(true);
@@ -251,6 +264,7 @@ const handleProceedToPay = async () => {
         });
         setPreview(null);
         setBirthCertificatePreview(null);
+        handleRegisterSuccess()
       } else {
         throw new Error(response?.message || "Failed to register student!");
       }
@@ -481,6 +495,23 @@ const handleProceedToPay = async () => {
           </Form>
         </div>
       </div>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Registration Successful</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Your Register and Payment Detail Is Successfully Done.<br/>
+          Once Verify your Details you will get an approval mail.<br/>
+          Thanks For Register.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={handleClose}>
+            Okay
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Modal show={showPaymentModal} onHide={handlePaymentModalClose} centered>
   <Modal.Header closeButton>
     <Modal.Title>Pay Fees</Modal.Title>
