@@ -15,6 +15,8 @@ const LoginPage = () => {
   const [showPopup, setShowPopup] = useState(false); // State for popup
   const [newPassword, setNewPassword] = useState(""); // State for new password
   const [oldPassword, setOldPassword] = useState(""); // State for old password
+  const [showPendingPopup, setShowPendingPopup] = useState(false);
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -40,8 +42,9 @@ const LoginPage = () => {
 
       if (response.ok && data.isSuccess && data.data) {
         if (data.data.statusId === 2 || data.data.statusId === 3) {
-          navigate("/Pending");
+          setShowPendingPopup(true); // 👈 Show pending popup instead of navigating
         } else {
+
           // Check if it's the user's first login
           if (data.data.isFirstLogin) {
             setShowPopup(true);
@@ -183,6 +186,23 @@ const LoginPage = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      {/* Pending Status Modal */}
+      <Modal show={showPendingPopup} onHide={() => setShowPendingPopup(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Registration Pending</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Your registration and payment details are successfully submitted.</p>
+          <p>Once your details are verified, you will receive an approval email.</p>
+          <p>Please contact your system administrator for any queries.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowPendingPopup(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </div>
   );
 };

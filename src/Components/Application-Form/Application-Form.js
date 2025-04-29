@@ -23,7 +23,7 @@ const RegisterStudent = () => {
   const [scheduleData, setScheduleData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const scheduleId = 8; // You can replace this dynamically as needed
+  const [scheduleId, setScheduleId] = useState(null); // initially null
   const [grades, setGrades] = useState([]);
   const [genders, setGenders] = useState([]);
   const [classModes, setClassModes] = useState([]);
@@ -71,6 +71,29 @@ const handlePaymentModalClose = () => {
   setQrImageUrl(null);
 };
 
+useEffect(() => {
+  const fetchLatestScheduleId = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/ScheduleTime/GetAll`, {
+        headers: getHeaders(),
+      });
+
+      if (response.data?.data?.length > 0) {
+        const latestSchedule = response.data.data.at(-1); // ✅ get the last item
+        setScheduleId(latestSchedule.id);
+      } else {
+        toast.error("No schedules found");
+      }
+    } catch (error) {
+      console.error("Failed to fetch schedules:", error);
+      toast.error("Failed to fetch schedule data");
+    }
+  };
+
+  fetchLatestScheduleId();
+}, []);
+
+
 const handleProceedToPay = async () => {
   try {
     setLoadingQR(true);
@@ -97,6 +120,8 @@ const handleProceedToPay = async () => {
     setLoadingQR(false);
   }
 };
+
+
 
   const [formData, setFormData] = useState({
     firstName: "",
