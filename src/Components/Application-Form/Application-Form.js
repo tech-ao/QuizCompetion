@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Row, Col ,Spinner } from "react-bootstrap";
+import { Button, Form, Row, Col, Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,6 +24,7 @@ const RegisterStudent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [scheduleId, setScheduleId] = useState(null); // initially null
+  const [studentId , setStudentId] = useState(null)
   const [grades, setGrades] = useState([]);
   const [genders, setGenders] = useState([]);
   const [classModes, setClassModes] = useState([]);
@@ -31,95 +32,157 @@ const RegisterStudent = () => {
   const navigate = useNavigate();
   const [birthCertificatePreview, setBirthCertificatePreview] = useState(null);
 
-
+  const [paymentProofFile, setPaymentProofFile] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-const [qrImageUrl, setQrImageUrl] = useState(null);
-const [loadingQR, setLoadingQR] = useState(false);
+  const [qrImageUrl, setQrImageUrl] = useState(null);
+  const [loadingQR, setLoadingQR] = useState(false);
 
-const COMMON_HEADERS = {
-  Accept: "text/plain",
-  "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
-  AccessToken: "123",
-  "Content-Type": "application/json",
-};
+  console.log(paymentProofFile);
+  console.log(studentId);
+  
+  
 
-const getHeaders = () => ({
-  ...COMMON_HEADERS,
-});
 
-const [show, setShow] = useState(false);
+  const COMMON_HEADERS = {
+    Accept: "text/plain",
+    "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
+    AccessToken: "123",
+    "Content-Type": "application/json",
+  };
+
+  const getHeaders = () => ({
+    ...COMMON_HEADERS,
+  });
+
+  const [show, setShow] = useState(false);
 
   const handleRegisterSuccess = () => {
     // Call this function once registration and payment are successful
     setShow(true);
-   
+
   };
 
-  const handleClose = () =>{
+  const handleClose = () => {
     setShow(false);
     navigate('/')
-  } 
+  }
 
 
-const handlePaymentModalOpen = () => {
-  setShowPaymentModal(true);
-  setQrImageUrl(null); // Reset previous QR if any
-};
-
-const handlePaymentModalClose = () => {
-  setShowPaymentModal(false);
-  setQrImageUrl(null);
-};
-
-useEffect(() => {
-  const fetchLatestScheduleId = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/ScheduleTime/GetAll`, {
-        headers: getHeaders(),
-      });
-
-      if (response.data?.data?.length > 0) {
-        const latestSchedule = response.data.data.at(-1); // ✅ get the last item
-        setScheduleId(latestSchedule.id);
-      } else {
-        toast.error("No schedules found");
-      }
-    } catch (error) {
-      console.error("Failed to fetch schedules:", error);
-      toast.error("Failed to fetch schedule data");
+  
+  const handleUploadPaymentProof = async (studentIdParam) => {
+    console.log(paymentProofFile);
+    
+    if (!paymentProofFile) {
+      toast.error("Please select a file first!");
+      return;
     }
+  
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Content = reader.result.split(",")[1];
+      const extension = paymentProofFile.name.split(".").pop();
+  
+      const payload = {
+        scheduleId: scheduleId,     
+        studentId: studentIdParam,      
+        documentTypeId: 17,
+        extension: extension,
+        name: paymentProofFile.name,
+        base64Content: base64Content,
+        timeStamp: new Date().toISOString(),
+        isDeleted: false
+      };
+
+      console.log(payload);
+      
+  
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/ExamPayments/Create`,
+          payload,
+          {
+            headers: {
+              Accept: "text/plain",
+              "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
+              AccessToken: "123",
+              "Content-Type": "application/json"
+            }
+          }
+        );
+  
+        toast.success("Payment proof uploaded successfully!");
+        console.log("Upload Success:", response.data);
+      } catch (error) {
+        console.error("Upload error:", error);
+        toast.error("Failed to upload payment proof.");
+      }
+    };
+  
+    reader.readAsDataURL(paymentProofFile);
+  };
+  
+
+
+
+  const handlePaymentModalOpen = () => {
+    setShowPaymentModal(true);
+    setQrImageUrl(null); 
+    };
+
+  const handlePaymentModalClose = () => {   
+    setShowPaymentModal(false);
+    setQrImageUrl(null);
   };
 
-  fetchLatestScheduleId();
-}, []);
+  useEffect(() => {
+    const fetchLatestScheduleId = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/ScheduleTime/GetAll`, {
+          headers: getHeaders(),
+        });
 
-
-const handleProceedToPay = async () => {
-  try {
-    setLoadingQR(true);
-
-    const scheduledTimeId = scheduleData?.data?.scheduledTimeId || 9; // fallback to 9 if not available
-    console.log(BASE_URL); // if you want to check BASE_URL in console
-
-    const response = await axios.get(
-      `${BASE_URL}/ScheduleTime/GetQRDocumentFileByScheduledTime?ScheduledTimeId=${scheduledTimeId}`,
-      {
-        headers: getHeaders(),
+        if (response.data?.data?.length > 0) {
+          const latestSchedule = response.data.data.at(-1); // ✅ get the last item
+          setScheduleId(latestSchedule.id);
+        } else {
+          toast.error("No schedules found");
+        }
+      } catch (error) {
+        console.error("Failed to fetch schedules:", error);
+        toast.error("Failed to fetch schedule data");
       }
-    );
+    };
 
-    if (response.data?.data) {
-      setQrImageUrl(response.data.data); // assuming API returns direct image URL
-    } else {
-      toast.error("Failed to load QR Code!");
+    fetchLatestScheduleId();
+  }, []);
+
+
+  const handleProceedToPay = async () => {
+    try {
+      setLoadingQR(true);
+
+      const scheduledTimeId = scheduleData?.data?.scheduledTimeId || 9; // fallback to 9 if not available
+      console.log(BASE_URL); // if you want to check BASE_URL in console
+
+      const response = await axios.get(
+        `${BASE_URL}/ScheduleTime/GetQRDocumentFileByScheduledTime?ScheduledTimeId=${scheduledTimeId}`,
+        {
+          headers: getHeaders(),
+        }
+      );
+
+      if (response.data?.data) {
+        setQrImageUrl(response.data.data); // assuming API returns direct image URL
+      } else {
+        toast.error("Failed to load QR Code!");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching QR Code.");
+    } finally {
+      setLoadingQR(false);
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("Error fetching QR Code.");
-  } finally {
-    setLoadingQR(false);
-  }
-};
+  };
 
 
 
@@ -267,10 +330,16 @@ const handleProceedToPay = async () => {
 
       const response = await dispatch(addStudentAction(formData));
 
+      setStudentId(response?.data)
+      console.log(response?.data);
+      
+      const newStudentId = response?.data;
       console.log("Response from Action:", response); // Debugging
 
       if (response?.isSuccess) {
         toast.success("Student registered successfully!");
+
+        await handleUploadPaymentProof(newStudentId);
         setFormData({
           firstName: "",
           lastName: "",
@@ -287,6 +356,7 @@ const handleProceedToPay = async () => {
           createdBy: 1,
           centerName: ""
         });
+     
         setPreview(null);
         setBirthCertificatePreview(null);
         handleRegisterSuccess()
@@ -497,6 +567,20 @@ const handleProceedToPay = async () => {
               </div>
             </Form.Group>
 
+            <Form.Group className="mb-0" controlId="formCenterName">
+              <Form.Label>Payment Proof</Form.Label>
+              <Form.Control
+             
+               type="file"
+               name="paymentProof"
+               accept="image/*,application/pdf"
+               onChange={(e) => setPaymentProofFile(e.target.files[0])}
+             />
+             
+            </Form.Group>
+
+
+
 
             <div className="d-flex align-items-center justify-content-between">
               <Link
@@ -526,8 +610,8 @@ const handleProceedToPay = async () => {
           <Modal.Title>Registration Successful</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Your Register and Payment Detail Is Successfully Done.<br/>
-          Once Verify your Details you will get an approval mail.<br/>
+          Your Register and Payment Detail Is Successfully Done.<br />
+          Once Verify your Details you will get an approval mail.<br />
           Thanks For Register.
         </Modal.Body>
         <Modal.Footer>
@@ -538,48 +622,48 @@ const handleProceedToPay = async () => {
       </Modal>
 
       <Modal show={showPaymentModal} onHide={handlePaymentModalClose} centered>
-  <Modal.Header closeButton>
-    <Modal.Title>Pay Fees</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {!qrImageUrl ? (
-      <>
-        <p>Are you sure you want to proceed with payment of <strong>₹{scheduleData?.data.fees}</strong>?</p>
-      </>
-    ) : (
-      <div className="text-center">
-        <h5>Scan QR Code to Pay</h5>
-        <img
-          src={`data:image/png;base64,${qrImageUrl}`}
-          alt="QR Code"
-          style={{ width: "300px", height: "300px", objectFit: "contain" }}
-        />
-      </div>
-    )}
+        <Modal.Header closeButton>
+          <Modal.Title>Pay Fees</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {!qrImageUrl ? (
+            <>
+              <p>Are you sure you want to proceed with payment of <strong>₹{scheduleData?.data.fees}</strong>?</p>
+            </>
+          ) : (
+            <div className="text-center">
+              <h5>Scan QR Code to Pay</h5>
+              <img
+                src={`data:image/png;base64,${qrImageUrl}`}
+                alt="QR Code"
+                style={{ width: "300px", height: "300px", objectFit: "contain" }}
+              />
+            </div>
+          )}
 
-    {loadingQR && (
-      <div className="text-center mt-3">
-        <Spinner animation="border" variant="primary" />
-      </div>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-    {!qrImageUrl ? (
-      <>
-        <Button variant="secondary" onClick={handlePaymentModalClose}>
-          Cancel
-        </Button>
-        <Button variant="success" onClick={handleProceedToPay} disabled={loadingQR}>
-          {loadingQR ? "Loading..." : "Proceed to Pay"}
-        </Button>
-      </>
-    ) : (
-      <Button variant="secondary" onClick={handlePaymentModalClose}>
-        Close
-      </Button>
-    )}
-  </Modal.Footer>
-</Modal>
+          {loadingQR && (
+            <div className="text-center mt-3">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {!qrImageUrl ? (
+            <>
+              <Button variant="secondary" onClick={handlePaymentModalClose}>
+                Cancel
+              </Button>
+              <Button variant="success" onClick={handleProceedToPay} disabled={loadingQR}>
+                {loadingQR ? "Loading..." : "Proceed to Pay"}
+              </Button>
+            </>
+          ) : (
+            <Button variant="secondary" onClick={handlePaymentModalClose}>
+              Close
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
 
     </div>
   );
