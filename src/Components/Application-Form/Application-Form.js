@@ -160,8 +160,9 @@ const RegisterStudent = () => {
   const handleProceedToPay = async () => {
     try {
       setLoadingQR(true);
+console.log(scheduleData);
 
-      const scheduledTimeId = scheduleData?.data?.scheduledTimeId || 9; // fallback to 9 if not available
+      const scheduledTimeId = scheduleData?.data?.id || 9; // fallback to 9 if not available
       console.log(BASE_URL); // if you want to check BASE_URL in console
 
       const response = await axios.get(

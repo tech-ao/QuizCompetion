@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import "./LoginPage.css"; // Your existing styles
+import "./LoginPage.css";
 import BASE_URL from "../../redux/Services/Config";
-import { Modal, Button, Form } from "react-bootstrap";
-import { toast } from "react-toastify"; // Import Toastify for notifications
+import { Modal, Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -12,10 +12,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPopup, setShowPopup] = useState(false); // State for popup
-  const [newPassword, setNewPassword] = useState(""); // State for new password
-  const [oldPassword, setOldPassword] = useState(""); // State for old password
   const [showPendingPopup, setShowPendingPopup] = useState(false);
+  const [studentId, setStudentId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -42,22 +40,14 @@ const LoginPage = () => {
 
       if (response.ok && data.isSuccess && data.data) {
         if (data.data.statusId === 2 || data.data.statusId === 3) {
-          setShowPendingPopup(true); // 👈 Show pending popup instead of navigating
+          setShowPendingPopup(true);
         } else {
+          sessionStorage.setItem("isLoggedIn", "true");
+          sessionStorage.setItem("userRole", "Student");
+          setStudentId(data.data.studentId);
+          localStorage.setItem("studentId", data.data.studentId);
 
-          // Check if it's the user's first login
-          if (data.data.isFirstLogin) {
-            setShowPopup(true);
-          } else {
-            // ✅ Set session values
-            sessionStorage.setItem("isLoggedIn", "true");
-            sessionStorage.setItem("userRole", "Student");
-
-            // ✅ Set studentId in localStorage
-            localStorage.setItem("studentId", data.data.studentId);
-
-            navigate("/student-details", { state: { userData: data.data } });
-          }
+          navigate("/student-details", { state: { userData: data.data } });
         }
       } else {
         setError("Invalid username or password.");
@@ -67,41 +57,6 @@ const LoginPage = () => {
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handlePasswordUpdate = async () => {
-    if (!oldPassword || !newPassword) {
-      setError("Please enter both old and new password.");
-      return;
-    }
-
-    try {
-      const updateApiUrl = `${BASE_URL}/PasswordManager/StudentChangePassword?StudentId=${localStorage.getItem(
-        "studentId"
-      )}&OldPassword=${encodeURIComponent(oldPassword)}&Password=${encodeURIComponent(newPassword)}`;
-
-      const response = await fetch(updateApiUrl, {
-        method: "POST",
-        headers: {
-          "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
-          AccessToken: "123",
-        },
-      });
-
-      const result = await response.json();
-
-      if (result.isSuccess) {
-        toast.success("Password updated successfully. Please log in with your new password.");
-        setShowPopup(false);
-        setUsername(""); // Reset username field
-        setPassword(""); // Reset password field
-      } else {
-        setError("Failed to update password. Please check your old password.");
-      }
-    } catch (err) {
-      console.error("Error updating password:", err);
-      setError("An error occurred. Please try again.");
     }
   };
 
@@ -155,37 +110,6 @@ const LoginPage = () => {
         </p>
       </div>
 
-      {/* Password Update Modal for First Login */}
-      <Modal show={showPopup} onHide={() => setShowPopup(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Update Password</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label>Old Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>New Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handlePasswordUpdate}>
-            Update Password
-          </Button>
-        </Modal.Footer>
-      </Modal>
       {/* Pending Status Modal */}
       <Modal show={showPendingPopup} onHide={() => setShowPendingPopup(false)} centered>
         <Modal.Header closeButton>
@@ -202,7 +126,6 @@ const LoginPage = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
   );
 };

@@ -146,7 +146,7 @@ const ManualSubmit = () => {
           <div className="question-body text-center mb-4">
             <p className="mb-2">Time Taken: 07:30</p> {/* You can dynamically pass Time Taken if needed */}
             <p className="mb-2">No. of Qus: {qnResult?.data?.allocatedQuestions || "-"}</p>
-            <p className="mb-2">Answered: {qnResult?.data?.allocatedQuestions || "-"}</p> {/* Assuming answered is same as allocated */}
+            <p className="mb-2">Answered: {qnResult?.data?.completedQuestions || "-"}</p> {/* Assuming answered is same as allocated */}
             <p className="mb-2">Correct Answer: {qnResult?.data?.correct || "-"}</p>
             <p className="mb-2">Wrong Answer: {qnResult?.data?.wrong || "-"}</p>
           </div>

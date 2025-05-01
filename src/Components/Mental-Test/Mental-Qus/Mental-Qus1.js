@@ -28,7 +28,7 @@ const Questions = () => {
   const [examId, setExamId] = useState(null);
   const [onExamId, setOnExamId] = useState(null);
 
-  const scheduleId = 8;
+ const [scheduleId,setScheduleId]=useState()
   const studentId = localStorage.getItem("studentId");
 
   const questionState = useSelector((state) => state.questionList);
@@ -60,9 +60,32 @@ const Questions = () => {
     dispatch(getQuestions({ level: level, pagination: { pageSize: 15, pageNumber: 1 } }));
   }, [dispatch, level]);
 
-const manualQuestion = scheduleData?.data.manual
+const manualQuestion = scheduleData?.data?.mental
 
-  
+
+useEffect(() => {
+  const fetchLatestScheduleId = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/ScheduleTime/GetAll`, {
+        headers: getHeaders(),
+      });
+
+      if (response.data?.data?.length > 0) {
+        const latestSchedule = response.data.data.at(-1); // ✅ get the last item
+        setScheduleId(latestSchedule.id);
+      } else {
+        toast.error("No schedules found");
+      }
+    } catch (error) {
+      console.error("Failed to fetch schedules:", error);
+      toast.error("Failed to fetch schedule data");
+    }
+  };
+
+  fetchLatestScheduleId();
+}, []);
+
+
 
 useEffect(() => {
   if (questionState.questions?.data?.questions) {
@@ -88,6 +111,8 @@ useEffect(() => {
             AccessToken: "123",
           },
         });
+        console.log(response);
+        
         if (response.data) {
           setScheduleData(response.data);
         } else {
