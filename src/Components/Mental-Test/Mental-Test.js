@@ -43,7 +43,7 @@ const TestType = () => {
 
   // Handle Manual click event to navigate to Question page
   const handleManualClick = () => {
-    navigate("/question"); // Navigate to /question route
+    
   };
 
   return (
@@ -90,22 +90,24 @@ const TestType = () => {
           style={{ maxWidth: "1400px", width: "100%", margin: "0 auto" }}
         >
           {/* Manual Section */}
-          <div
-            className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-5"
-            onClick={handleManualClick}
-          >
+        
+
+          {/* Mental Section */}
+          <div className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-5" onClick={handleManualClick}>
             <div
-              className="box p-4 d-flex justify-content-center align-items-center bg-white text-dark rounded shadow-sm"
+              className="box p-4 d-flex justify-content-center align-items-center bg-success text-white rounded shadow-sm"
               style={{ height: "150px", width: "150px", cursor: "pointer" }}
             >
               <p className="mb-0">Manual</p>
             </div>
           </div>
 
-          {/* Mental Section */}
-          <div className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-5" onClick={handleMentalClick}>
+          <div
+            className="col-12 col-md-6 col-lg-5 d-flex justify-content-center align-items-center mb-5"
+            onClick={handleMentalClick}
+          >
             <div
-              className="box p-4 d-flex justify-content-center align-items-center bg-success text-white rounded shadow-sm"
+              className="box p-4 d-flex justify-content-center align-items-center bg-white text-dark rounded shadow-sm"
               style={{ height: "150px", width: "150px", cursor: "pointer" }}
             >
               <p className="mb-0">Mental</p>

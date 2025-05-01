@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getQuestions } from "../../../redux/Action/QuestionAction";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../Question/Question.css"
+import "../../Question/Question.css";
 import { fetchStudent } from "../../../redux/Action/StudentAction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,11 +24,12 @@ const Questions = () => {
   const [answer, setAnswer] = useState("");
   const [questions, setQuestions] = useState([]);
   const [scheduleData, setScheduleData] = useState(null);
-
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [timerStarted, setTimerStarted] = useState(false);
   const [examId, setExamId] = useState(null);
   const [onExamId, setOnExamId] = useState(null);
-
- const [scheduleId,setScheduleId]=useState()
+const [scheduleId ,setScheduleId] = useState()
+ 
   const studentId = localStorage.getItem("studentId");
 
   const questionState = useSelector((state) => state.questionList);
@@ -48,6 +49,27 @@ const Questions = () => {
   
   
   
+  useEffect(() => {
+    const fetchLatestScheduleId = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/ScheduleTime/GetAll`, {
+          headers: getHeaders(),
+        });
+
+        if (response.data?.data?.length > 0) {
+          const latestSchedule = response.data.data.at(-1); // ✅ get the last item
+          setScheduleId(latestSchedule.id);
+        } else {
+          toast.error("No schedules found");
+        }
+      } catch (error) {
+        console.error("Failed to fetch schedules:", error);
+        toast.error("Failed to fetch schedule data");
+      }
+    };
+
+    fetchLatestScheduleId();
+  }, []);
 
 
   useEffect(() => {
@@ -60,42 +82,19 @@ const Questions = () => {
     dispatch(getQuestions({ level: level, pagination: { pageSize: 15, pageNumber: 1 } }));
   }, [dispatch, level]);
 
-const manualQuestion = scheduleData?.data?.mental
+const metalQuestion = scheduleData?.data?.mental
 
-
-useEffect(() => {
-  const fetchLatestScheduleId = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/ScheduleTime/GetAll`, {
-        headers: getHeaders(),
-      });
-
-      if (response.data?.data?.length > 0) {
-        const latestSchedule = response.data.data.at(-1); // ✅ get the last item
-        setScheduleId(latestSchedule.id);
-      } else {
-        toast.error("No schedules found");
-      }
-    } catch (error) {
-      console.error("Failed to fetch schedules:", error);
-      toast.error("Failed to fetch schedule data");
-    }
-  };
-
-  fetchLatestScheduleId();
-}, []);
-
-
+  
 
 useEffect(() => {
   if (questionState.questions?.data?.questions) {
     const fetchedQuestions = questionState.questions.data.questions;
     const shuffledQuestions = fetchedQuestions.sort(() => 0.5 - Math.random());
-    const limitedQuestions = shuffledQuestions.slice(0, manualQuestion || shuffledQuestions.length);
+    const limitedQuestions = shuffledQuestions.slice(0, metalQuestion || shuffledQuestions.length);
     
     setQuestions(limitedQuestions);
   }
-}, [questionState, manualQuestion]);
+}, [questionState, metalQuestion]);
 
 
  
@@ -111,8 +110,6 @@ useEffect(() => {
             AccessToken: "123",
           },
         });
-        console.log(response);
-        
         if (response.data) {
           setScheduleData(response.data);
         } else {
@@ -180,7 +177,7 @@ useEffect(() => {
         studentId: parseInt(studentId),
         level: level,
         scheduleTimeId: scheduleId,
-        isManual:false,
+        ismetal:true,
         questionId: currentQuestion.questionId,
         sNo: currentQuestion.no,
         answer: answer,
@@ -223,7 +220,7 @@ useEffect(() => {
   
     // ✅ 3. Navigate if last question, else move to next
     if (currentQuestionIndex === questions.length - 1) {
-    navigate("/mental-submit", { state: { examId: examId } });
+    navigate("/mental-submit", { state: { examId: examId ,CompletedTime:CompletedTime , scheduleData:scheduleData?.data}  });
 
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -237,9 +234,6 @@ useEffect(() => {
     const currentQuestion = questions[currentQuestionIndex];
     const now = new Date().toISOString();
 
-    console.log(examId);
-    console.log(onExamId);
-    
     
 
     if (examId !== null) {
@@ -252,7 +246,7 @@ useEffect(() => {
             onExamId: onExamId,
             studentId: parseInt(studentId),
             level: level,
-            isManual:false,
+            isManual:true,
             scheduleTimeId: scheduleId,
             questionId: currentQuestion.questionId,
             sNo: currentQuestion.no,
@@ -279,6 +273,9 @@ useEffect(() => {
 
   const currentQuestion = questions[currentQuestionIndex];
 
+
+  const CompletedTime = formatTime(timer) 
+  
   
 
   return (
@@ -316,6 +313,7 @@ useEffect(() => {
             <div className="question-header d-flex justify-content-between align-items-center  p-3  mb-1">
               <span>Qn. No: {currentQuestionIndex+1}</span>
               <span>Time: {formatTime(timer)}</span>
+              
             </div>
 
             <div className="question-body text-center mb-4">
@@ -332,7 +330,7 @@ useEffect(() => {
             </div>
           </div>
         ) : (
-          <div className="text-center">No questions available.</div>
+          <div className="text-center">No questions available. Please Contact Your Admin</div>
         )}
       </div>
     </div>

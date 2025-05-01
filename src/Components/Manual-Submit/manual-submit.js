@@ -37,8 +37,25 @@ function ManualSubmit() {
   const [qnResult , setQnResult] = useState(null)
   const location = useLocation();
 const examId = location.state?.examId;
+const CompletedTime = location.state?.CompletedTime;
+const scheduleData = location.state?.scheduleData;
+const [minutesStr, secondsStr] = CompletedTime.split(':');
+const completedMinutes = parseInt(minutesStr, 10) + parseInt(secondsStr, 10) / 60;
 
-console.log(examId); // 29
+const totalTime = scheduleData.totalTime
+// Calculate remaining time
+const remainingTime = totalTime - completedMinutes;
+
+// Optional: Convert to mm:ss format
+const remainingMinutes = Math.floor(remainingTime);
+const remainingSeconds = Math.round((remainingTime - remainingMinutes) * 60);
+const formattedRemainingTime = `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+
+
+
+
+
+
 
   useEffect(() => {
     if (studentId) {
@@ -74,8 +91,11 @@ console.log(examId); // 29
   useEffect(() => {
     const submitExam = async () => {
       try {
-        await axios.post(`${BASE_URL}/Exam/Submit?ExamId=${examId}`, {}, { headers: getHeaders() });
-        console.log("Exam Submitted Successfully!");
+        await axios.post(
+          `${BASE_URL}/Exam/Submit?ExamId=${examId}&CompletedTime=${CompletedTime}`,
+          {},
+          { headers: getHeaders() }
+        );        
       } catch (error) {
         console.error("Error submitting exam:", error);
       }
@@ -132,7 +152,7 @@ setQnResult(response?.data);
               <span style={{ color: 'red' }}>🎉 For Any Assistance Call Incharge 🎉</span>
             </div>
             <div className="question-body text-center mb-4">
-              <p className="mb-2">Time Taken: 07:30</p>
+              <p className="mb-2">Time Taken: {formattedRemainingTime}</p>
               <p className="mb-2">No. of Qus: {qnResult?.data?.allocatedQuestions}</p>
               <p className="mb-2">Answered:{qnResult?.data?.completedQuestions}</p>
               <p className="mb-2">Correct Answer: {qnResult?.data?.correct}</p>

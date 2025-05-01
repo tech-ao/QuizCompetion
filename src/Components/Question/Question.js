@@ -220,7 +220,7 @@ useEffect(() => {
   
     // ✅ 3. Navigate if last question, else move to next
     if (currentQuestionIndex === questions.length - 1) {
-    navigate("/manual-submit", { state: { examId: examId } });
+    navigate("/manual-submit", { state: { examId: examId ,CompletedTime:CompletedTime , scheduleData:scheduleData?.data}  });
 
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -234,9 +234,6 @@ useEffect(() => {
     const currentQuestion = questions[currentQuestionIndex];
     const now = new Date().toISOString();
 
-    console.log(examId);
-    console.log(onExamId);
-    
     
 
     if (examId !== null) {
@@ -276,6 +273,9 @@ useEffect(() => {
 
   const currentQuestion = questions[currentQuestionIndex];
 
+
+  const CompletedTime = formatTime(timer) 
+  
   
 
   return (
@@ -313,6 +313,7 @@ useEffect(() => {
             <div className="question-header d-flex justify-content-between align-items-center  p-3  mb-1">
               <span>Qn. No: {currentQuestionIndex+1}</span>
               <span>Time: {formatTime(timer)}</span>
+              
             </div>
 
             <div className="question-body text-center mb-4">
