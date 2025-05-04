@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchStudent } from "../../redux/Action/StudentAction";
@@ -6,18 +6,55 @@ import Swal from "sweetalert2"; // Popup library
 import axios from "axios"; // For API call
 import "./Student-Details.css";
 import BASE_URL from "../../redux/Services/Config";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const StudentDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const studentId = localStorage.getItem("studentId");
+  const [scheduleData, setScheduleData] = useState(null);
+    const [scheduleId, setScheduleId] = useState(null); // initially null
+  
 
   const { loading, error, selectedStudent } = useSelector(
     (state) => state.studentDetails
   );
 
+  const COMMON_HEADERS = {
+    Accept: "text/plain",
+    "X-Api-Key": "3ec1b120-a9aa-4f52-9f51-eb4671ee1280",
+    AccessToken: "123",
+    "Content-Type": "application/json",
+  };
+
+  const getHeaders = () => ({
+    ...COMMON_HEADERS,
+  });
   const student = selectedStudent?.data;
+  useEffect(() => {
+    const fetchLatestScheduleId = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/ScheduleTime/GetAll`, {
+          headers: getHeaders(),
+        });
+
+        if (response.data?.data?.length > 0) {
+          const latestSchedule = response.data.data.at(-1); // ✅ get the last item
+          setScheduleId(latestSchedule.id);
+        } else {
+          toast.error("No schedules found");
+        }
+      } catch (error) {
+        console.error("Failed to fetch schedules:", error);
+        toast.error("Failed to fetch schedule data");
+      }
+    };
+
+    fetchLatestScheduleId();
+  }, []);
 
   useEffect(() => {
     if (studentId) {
@@ -26,8 +63,8 @@ const StudentDetails = () => {
   }, [dispatch, studentId]);
 
   const handleStartTest = async () => {
-    const scheduleTimeId = 18; // You can make this dynamic if needed
-    const url = `${BASE_URL}/Exam/IsStudentEligibleToExam?scheduleTimeId=${scheduleTimeId}&studentId=${studentId}`;
+    // You can make this dynamic if needed
+    const url = `${BASE_URL}/Exam/IsStudentEligibleToExam?scheduleTimeId=${scheduleId}&studentId=${studentId}`;
 
     try {
       const response = await axios.get(url, {
@@ -38,8 +75,7 @@ const StudentDetails = () => {
           "Content-Type": "application/json",
         },
       });
-
-      if (response.data === true) {
+      if (response.data?.data === true) {
         navigate("/Test-Type");
       } else {
         Swal.fire({
